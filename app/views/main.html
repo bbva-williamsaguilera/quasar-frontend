@@ -1,0 +1,48 @@
+
+<div class="row">
+	<div class="col-xs-12">
+		<ul class="list-group">
+			<li ng-repeat="device in devices" class="list-group-item" ng-click="loadDevice(device.device)">
+				<div class="row">
+					<div class="col-xs-2">
+						{{device.name}}
+					</div>
+					<div class="col-xs-10">
+						<!-- Temperatura ambiente -->
+						<div class="row">
+							<div class="col-xs-4">
+								<span class="badge">Temperatura ambiente</span>
+							</div>
+							<div class="col-xs-8">
+								
+								Grafica va aqui!
+								<!-- <div bar-chart bar-height="20" bar-padding="5" data="datad3"></div>
+							-->
+							</div>
+						</div>
+						<!-- Humedad -->
+						<div class="row">
+							<div class="col-xs-4">
+								<span class="badge">Humedad</span>
+							</div>
+							<div class="col-xs-8">
+								Grafica va aqui!
+							</div>
+						</div>
+						<!-- Luz -->
+						<div class="row">
+							<div class="col-xs-4">
+								<span class="badge">Luz</span>
+							</div>
+							<div class="col-xs-8">
+								Grafica va aqui!
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</li>
+	  </ul>
+	</div>
+  
+</div>
