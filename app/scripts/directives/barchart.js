@@ -9,7 +9,7 @@
 angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout', 'd3Service', 
   function($window, $timeout, d3Service) {
     return {
-      restrict: 'A',
+      restrict: 'AE',
       scope: {
         data: '=',
         label: '@',
@@ -45,8 +45,8 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
             svg.selectAll('*').remove();
 
             if (!data) {
-            	return
-            };
+            	return;
+            }
             if (renderTimeout){
             	clearTimeout(renderTimeout);
             } 
@@ -63,11 +63,13 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
 
               svg.attr('height', height);
 
+
+
               svg.selectAll('rect')
                 .data(data)
                 .enter()
                   .append('rect')
-                  .on('click', function(d,i) {
+                  .on('click', function(d) {
                     return scope.onClick({item: d});
                   })
                   .attr('height', barHeight)
@@ -84,6 +86,7 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
                     .attr('width', function(d) {
                       return xScale(d.score);
                     });
+                    
               svg.selectAll('text')
                 .data(data)
                 .enter()
@@ -99,5 +102,5 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
             }, 200);
           };
         });
-      }}
+      }};
 }]);

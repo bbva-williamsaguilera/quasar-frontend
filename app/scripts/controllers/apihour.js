@@ -9,6 +9,7 @@
  */
 angular.module('quasarFrontendApp')
   .controller('ApihourCtrl', ['$scope', 'quasarApi', function ($scope, quasarApi) {
+
     	$scope.devices = [];
     	$scope.mqttClient = null;
 
@@ -18,13 +19,108 @@ angular.module('quasarFrontendApp')
     		'mqttConnection': false
     	};
 
+    	$scope.addRandomData = function(){
+    		var randNum = Math.random() * (35 - 28) + 28;
+    		var curDate = parseInt(moment().format('x'));
+    		$scope.monitorize[2].locations[0].data.push([curDate, randNum]);
+    		console.log("Added "+randNum+"");
+    	}
 
-    	$scope.datad3 = [
-	      {name: 'Greg', score: 98},
-	      {name: 'Ari', score: 96},
-	      {name: 'Q', score: 75},
-	      {name: 'Loser', score: 48}
-	    ];
+    	$scope.monitorize = [
+    		{
+    			'key':'light',
+    			'value': 'Luz',
+    			'color': 'yellow',
+    			'suffix': 'lux',
+    			'locations': [
+    				{
+    					'name': 'ENTRADA',
+    					'devices':['b0b448b86b06']
+    				},
+    				{
+    					'name': 'AUDITORIO',
+    					'devices': ['b0b448b81703','b0b448b85586']
+    				},
+    				{
+    					'name': 'PATIO DE COLUMNAS',
+    					'devices': ['b0b448b84887']
+    				}
+    			],
+    			'mqtt':'quasar/datum#lux',
+    			'datum':'lux'
+    		},
+    		{
+    			'key':'temperature',
+    			'value': 'Temperatura',
+    			'color': 'magenta',
+    			'suffix': '˚C',
+    			'locations': [
+    				{
+    					'name': 'ENTRADA',
+    					'devices':['b0b448b86b06']
+    				},
+    				{
+    					'name': 'AUDITORIO',
+    					'devices': ['b0b448b81703','b0b448b85586']
+    				},
+    				{
+    					'name': 'PATIO DE COLUMNAS',
+    					'devices': ['b0b448b84887']
+    				}
+    			],
+    			'mqtt':'quasar/datum#ambient_temperature',
+    			'datum':'ambient_temperature'
+    		},
+    		{
+    			'key':'humidity',
+    			'value': 'Humedad',
+    			'color': 'blue',
+    			'suffix': '%',
+    			'locations': [
+    				{
+    					'name': 'ENTRADA',
+    					'devices':['b0b448b86b06']
+    				},
+    				{
+    					'name': 'AUDITORIO',
+    					'devices': ['b0b448b84887','b0b448b85586']
+    				},
+    				{
+    					'name': 'PATIO DE COLUMNAS',
+    					'devices': ['b0b448b81703']
+    				}
+    			],
+    			'mqtt':'quasar/datum#humidity',
+    			'datum':'humidity'
+    		},
+    		{
+    			'key':'volume',
+    			'value': 'Volumen',
+    			'color': 'white',
+    			'suffix': 'db',
+    			'locations': [
+    				{
+    					'name': 'PATIO DE COLUMNAS',
+    					'generic':['volume']
+    				}
+    			],
+    			'mqtt':'quasar/volume',
+    			'datum':'volume'
+    		}
+
+    	];
+
+
+    	$scope.xFunction = function(){
+			return function(d){
+				return d[0];
+			};
+		};
+		$scope.yFunction = function(){
+			return function(d){
+				return d[1];
+			};
+		};
 
     	function loadDevices(){
     		if($scope.loadState.devices !== true){
@@ -48,14 +144,39 @@ angular.module('quasarFrontendApp')
     			for(var i=0; i<$scope.devices.length; i++){
     				$scope.loadDeviceData($scope.devices[i]);
     			}
-    			console.log($scope.devices);
+    			console.log($scope.monitorize);
     		}
     	}
 
     	$scope.loadDeviceData = function(device){
     		quasarApi.getSensorData(device.device).then(function(response){
-    			device.info = response.data;
-    			startListening();
+
+    			for(var i=0; i<$scope.monitorize.length; i++){
+    				var monitor_group = $scope.monitorize[i];
+
+    				for(var y=0; y<monitor_group.locations.length; y++){
+    					if(monitor_group.locations[y].devices){
+	    					if(monitor_group.locations[y].devices.indexOf(device.device) >= 0){
+	    						if(monitor_group.locations[y].data === undefined){
+	    							monitor_group.locations[y].data = [];
+	    						}
+
+	    						for(var x=0; x<response.data.length; x++){
+	    							var metric = response.data[x];
+	    							var date = parseInt(moment(metric.date).format('x'));  // jshint ignore:line
+	    							if(monitor_group.datum && metric[monitor_group.datum]){
+			    						monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
+			    					}
+		    					}
+
+		    					monitor_group.locations[y].data.sort(function(a,b){ return a[0]-b[0]; });
+	    					}
+	    				}
+    				}
+
+    			}
+    			
+    			//startListening();
     		}, function(error){
     			console.log('Fallo al cargar los historicos de '+device.device+' '+error);
     		});
@@ -97,13 +218,12 @@ angular.module('quasarFrontendApp')
 	    			$scope.loadState.mqttConnection = false;
 	    		});
 
+	    		/*
 				$scope.mqttClient.on('message', function (topic, message) {
-					console.log(topic);
-					console.log(message);
-					console.log('--------');
-				});
-
-				console.log($scope.mqttClient);
+					//console.log(topic);
+					//console.log(message);
+					//console.log('--------');
+				});*/
 			}
     	}
 	
