@@ -20,7 +20,15 @@
 			</li>
 	  	</ul>
 
-	  	<button ng-click="addRandomData()">Boton</button>
+	  	<div>
+	  		Cafeteria: {{ mqttCafeteria }}
+	  	</div>
+
+	  	<div style="color:#000;">
+		  	<input type="text" ng-model="randRow"/>
+		  	<input type="text" ng-model="randLoc"/>
+		  	<input type="button" ng-click="addRandomData()"  value="Random!" />
+		  </div>
 
 	</div>
   

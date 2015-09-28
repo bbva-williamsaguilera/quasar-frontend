@@ -26,8 +26,13 @@ angular.module('quasarFrontendApp')
 			return $http.get(host+'datum?device='+device);
 		}
 
+		function getGenericData(generic){
+			return $http.get(host+'generic/'+generic+'?after=2015-09-27 00:00:00&limit=1000');
+		}
+
 		return {
 			getDevices: getDevices,
-			getSensorData: getSensorData
+			getSensorData: getSensorData,
+			getGenericData: getGenericData
 		};
 	}]);

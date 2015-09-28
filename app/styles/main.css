@@ -15,7 +15,7 @@
 .axis line {
   fill: none;
   stroke: #000;
-  shape-rendering: auto;
+  shape-rendering: crispEdges;
 }
 
 .x.axis path {
@@ -29,17 +29,18 @@
 }
 
 .line.yellow{
-	stroke: rgb(253,189,44);
+	stroke: #FED888;
 }
 .line.blue{
-	stroke: rgb(9,79,164);
+	stroke: #009FE8;
 }
 .line.magenta{
-	stroke: rgb(200,23,94);
+	stroke: #C8175E;
 }
 .line.white{
-	stroke: rgb(255,255,255);
+	stroke: #FFFFFF;
 }
+
 
 
 
