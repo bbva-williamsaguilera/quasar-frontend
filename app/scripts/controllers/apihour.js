@@ -8,18 +8,31 @@
  * Controller of the quasarFrontendApp
  */
 angular.module('quasarFrontendApp')
-  .controller('ApihourCtrl', ['$scope', 'quasarApi', function ($scope, quasarApi) {
+  .controller('ApihourCtrl', ['$scope', 'quasarApi', '$http', '$interval', function ($scope, quasarApi, $http, $interval) {
 
     	$scope.devices = [];
     	$scope.mqttClient = null;
+        $scope.monitorize = [];
+        $scope.monitorizeData = [];
+        $scope.dataPushTimer = 2000; //Milliseconds in which the date is pushed to the graphics
 
-    	$scope.loadState = {
+        $scope.loadState = {
+            'locations': false,
     		'devices': false,
             'initialGenerics': false,
     		'initialData': false,
-    		'mqttConnection': false
+    		'mqttConnection': false,
+            'dataDevices': 0,
+            'dataGenerics': 0
     	};
 
+        if($scope.loadState.locations != true){
+            $http.get('misc/locations.json').then(function(res){
+                $scope.monitorize = res.data; 
+                $scope.loadState.locations = true;  
+                startLoad();  
+            });
+        }
 
     	//TODO Quitar función
     	$scope.addRandomData = function(){
@@ -35,119 +48,25 @@ angular.module('quasarFrontendApp')
             }
         ];
 
-    	$scope.monitorize = [
-    		{
-    			'key':'light',
-    			'value': 'Luz',
-    			'color': 'yellow',
-    			'suffix': ' lux',
-    			'locations': [
-    				{
-    					'key':'entrada',
-    					'name': 'ENTRADA',
-    					'devices':['b0b448b86b06']
-    				},
-    				{
-    					'key':'auditorio',
-    					'name': 'AUDITORIO',
-    					'devices': ['b0b448b81703','b0b448b85586']
-    				},
-    				{
-    					'key':'patio',
-    					'name': 'PATIO DE COLUMNAS',
-    					'devices': ['b0b448b84887']
-    				}
-    			],
-    			'mqtt':'quasar/datum',
-    			'datum':'lux'
-    		},
-    		{
-    			'key':'temperature',
-    			'value': 'Temperatura',
-    			'color': 'magenta',
-    			'suffix': '˚C',
-    			'locations': [
-    				{
-    					'key':'entrada',
-    					'name': 'ENTRADA',
-    					'devices':['b0b448b86b06']
-    				},
-    				{
-    					'key':'auditorio',
-    					'name': 'AUDITORIO',
-    					'devices': ['b0b448b81703','b0b448b85586']
-    				},
-    				{
-    					'key':'patio',
-    					'name': 'PATIO DE COLUMNAS',
-    					'devices': ['b0b448b84887']
-    				}
-    			],
-    			'mqtt':'quasar/datum',
-    			'datum':'ambient_temperature'
-    		},
-    		{
-    			'key':'humidity',
-    			'value': 'Humedad',
-    			'color': 'blue',
-    			'suffix': '%',
-    			'locations': [
-    				{
-    					'key':'entrada',
-    					'name': 'ENTRADA',
-    					'devices':['b0b448b86b06']
-    				},
-    				{
-    					'key':'auditorio',
-    					'name': 'AUDITORIO',
-    					'devices': ['b0b448b84887','b0b448b85586']
-    				},
-    				{
-    					'key':'patio',
-    					'name': 'PATIO DE COLUMNAS',
-    					'devices': ['b0b448b81703']
-    				}
-    			],
-    			'mqtt':'quasar/datum',
-    			'datum':'humidity'
-    		},
-    		{
-    			'key':'volume',
-    			'value': 'Volumen',
-    			'color': 'white',
-    			'suffix': 'db',
-    			'locations': [
-    				{
-    					'key':'patio',
-    					'name': 'PATIO DE COLUMNAS',
-    					'generic':['volume']
-    				}
-    			],
-    			'mqtt':'quasar/volume',
-    			'datum':'volume'
-    		}
-
-    	];
-
-
-    	$scope.xFunction = function(){
-			return function(d){
-				return d[0];
-			};
-		};
-		$scope.yFunction = function(){
-			return function(d){
-				return d[1];
-			};
-		};
-
         function startLoad(){
-            loadDevices();
-            loadGenericInitial();
+            if($scope.loadState.locations != false){
+                loadDevices();
+                loadGenericInitial();
+            }
+        }
+
+        function hasFinishedLoading(){
+            
+            if($scope.loadState.dataGenerics >= $scope.genericLoad.length && 
+                $scope.loadState.dataDevices >= $scope.devices.length){
+
+                $scope.monitorizeData = angular.copy($scope.monitorize);
+                startListening();
+            }
         }
 
         function loadGenericInitial(){
-            if($scope.loadState.initialGenerics !== true){
+            if($scope.loadState.initialGenerics != true){
                 for(var i=0; i<$scope.genericLoad.length; i++){
                     $scope.loadGenericData($scope.genericLoad[i]);
                 }
@@ -155,7 +74,7 @@ angular.module('quasarFrontendApp')
         }
 
     	function loadDevices(){
-    		if($scope.loadState.devices !== true){
+    		if($scope.loadState.devices != true){
 	    		quasarApi.getDevices().then(function(response){
 	    			$scope.devices = response.data;
 	    			if(response.data.length > 0){
@@ -172,11 +91,10 @@ angular.module('quasarFrontendApp')
     	}
 
     	function loadInitialData(){
-    		if($scope.loadState.initialData !== true){
-    			for(var i=0; i<$scope.devices.length; i++){
+    		if($scope.loadState.initialData != true){
+                for(var i=0; i<$scope.devices.length; i++){
     				$scope.loadDeviceData($scope.devices[i]);
     			}
-    			console.log($scope.monitorize);
     		}
     	}
 
@@ -207,13 +125,15 @@ angular.module('quasarFrontendApp')
                     }
 
                 }
-                
+
+
+                $scope.loadState.dataGenerics++;
+                hasFinishedLoading();
                 
             }, function(error){
                 console.log('Fallo al cargar los historicos de '+generic.key+' '+error);
             });
-
-            startListening();
+            
         };
 
     	$scope.loadDeviceData = function(device){
@@ -243,16 +163,17 @@ angular.module('quasarFrontendApp')
     				}
 
     			}
+
+                $scope.loadState.dataDevices++;
+                hasFinishedLoading();
     			
     			
     		}, function(error){
     			console.log('Fallo al cargar los historicos de '+device.device+' '+error);
     		});
-
-            startListening();
     	};
 
-    	startLoad();
+    	
 
     	function startListening(){
 
@@ -295,70 +216,105 @@ angular.module('quasarFrontendApp')
 			}
     	}
 
-        function pushDataValue(mqtt_topic, topic_var, resObject){
-            for(var i=0; i<$scope.monitorize.length; i++){
-                var monitor_group = $scope.monitorize[i];
-                if(monitor_group.mqtt == mqtt_topic){
+        $scope.dataPool = [];
 
-                    if(resObject[monitor_group.datum]){
-                        for(var y=0; y<monitor_group.locations.length; y++){
-                            var pushdata = false;
-                            if(monitor_group.locations[y].generic){
-                                if(monitor_group.locations[y].generic.indexOf(topic_var) >= 0){
-                                    pushdata = true;
+        $interval(function(){
+            var dataPoolCopy = angular.copy($scope.dataPool);
+            $scope.dataPool = [];
+            for(var i=0; i<dataPoolCopy.length; i++){
+                
+                var topicObject = dataPoolCopy[i].mqtt_object;
+
+                if(topicObject.length > 0){
+                    var avg_object = {};
+                    for(var y=0; y<topicObject.length; y++){
+                        for(var k in topicObject[y]){
+                            if(!isNaN(topicObject[y][k])){
+                                if(!avg_object[k]){
+                                    avg_object[k] = 0;
                                 }
+                                avg_object[k] += parseFloat(topicObject[y][k]);
                             }
-                            if(monitor_group.locations[y].devices && resObject.device){
-                                if(monitor_group.locations[y].devices.indexOf(resObject.device) >= 0){
-                                    pushdata = true;
+                        } 
+                    }
+                    for(var key in avg_object){
+                        avg_object[key] = avg_object[key]/topicObject.length;
+                    }
+
+                    //Inserta este objeto promedio en la estructura de datos
+                    dataPoolCopy[i].mqtt_object = avg_object;
+                    console.log(avg_object);
+                    
+                    for(y=0; y<$scope.monitorizeData.length; y++){
+                        var monitor_group = $scope.monitorizeData[y];
+                        if(monitor_group.mqtt == dataPoolCopy[i].mqtt_topic){
+
+                            if(dataPoolCopy[i].mqtt_object[monitor_group.datum]){
+                                for(var x=0; x<monitor_group.locations.length; x++){
+                                    var pushdata = false;
+                                    if(monitor_group.locations[x].generic){
+                                        if(monitor_group.locations[x].generic.indexOf(dataPoolCopy[i].topic_var) >= 0){
+                                            pushdata = true;
+                                        }
+                                    }
+                                    if(monitor_group.locations[x].devices && dataPoolCopy[i].mqtt_object.device){
+                                        if(monitor_group.locations[x].devices.indexOf(dataPoolCopy[i].mqtt_object.device) >= 0){
+                                            pushdata = true;
+                                        }
+                                    }
+
+                                    if(monitor_group.locations[x].data === undefined){
+                                        monitor_group.locations[x].data = [];
+                                    }
+                                    var nDate = moment().format('x');
+
+                                    if(pushdata == true){
+                                        monitor_group.locations[x].data.push([nDate, dataPoolCopy[i].mqtt_object[monitor_group.datum]]);
+                                        
+                                    }
                                 }
-                            }
-
-                            if(monitor_group.locations[y].data === undefined){
-                                monitor_group.locations[y].data = [];
-                            }
-                            var nDate = moment().format('x');
-
-                            if(pushdata == true){
-                                //console.log('Pushed '+[nDate, resObject[monitor_group.datum]]+' to '+monitor_group.key+' in location '+monitor_group.locations[y].name);
-                                //console.log(resObject);
-                                monitor_group.locations[y].data.push([nDate, resObject[monitor_group.datum]]);
                             }
                         }
                     }
+
+
                 }
+            }
+        }, $scope.dataPushTimer);
+
+        function pushDataValue(mqtt_topic, topic_var, resObject){
+            var datumExists = false;
+
+            for(var i=0; i<$scope.dataPool.length; i++){
+                if($scope.dataPool[i].mqtt_topic == mqtt_topic){
+                    datumExists = true;
+                    $scope.dataPool[i].mqtt_object.push(resObject);
+                }
+            }
+
+            if(!datumExists){
+                var datum = {
+                    'mqtt_topic':mqtt_topic,
+                    'topic_var': topic_var,
+                    'mqtt_object':[
+                        resObject
+                    ]
+                };
+                $scope.dataPool.push(datum);
             }
         }
-        var volumeToPush = [];
-    	function manageMqttMessage(topic, message){
+        
+        function manageMqttMessage(topic, message){
             var arrTopic = topic.split('/');
-
             if(arrTopic[arrTopic.length-2] == 'quasar'){
-                var nDate = moment().format('x');
                 switch(arrTopic[arrTopic.length-1]){
                     case 'volume':
-                        
-                        if(volumeToPush.length <=4){
-                            volumeToPush.push()
-                        }
-                        var nDate = moment().format('x');
-                        pushDataValue(topic, 'volume', angular.fromJson(message.toString()));
-
-                        //var nVol = angular.fromJson(message.toString()).volume;
-                        //$scope.monitorize[3].locations[0].data.push([nDate, nVol]);
-
-                    break;
                     case 'datum':
-                        var nDate = moment().format('x');
-                        pushDataValue(topic, 'datum', nDate, angular.fromJson(message.toString()));
+                        pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));
+                    break;
+
                 }
             }
-
-    		/*if(topic == 'quasar/cafeteria'){
-                console.log(message.toString());
-                $scope.mqttCafeteria = message.toString();
-                $scope.$apply();
-            }*/
     		
     	}
 	

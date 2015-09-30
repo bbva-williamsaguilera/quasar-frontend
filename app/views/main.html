@@ -2,16 +2,15 @@
 <div class="row">
 	<div class="col-xs-12">
 		<ul class="list-group">
-			<li ng-repeat='category in monitorize' class="list-group-item">
-				<div class="row">
-					<div class="col-xs-2">
-						{{ category.value }}
+			<li ng-repeat='category in monitorizeData' class="list-group-item">
+				<div class="row monitor-category" style="border-color:{{ category.color }}">
+					<div class="col-xs-1">
+						<i class="group-icon" ng-class="category.icon"></i>
 					</div>
 					
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						<sparkline
-							data="category"
-							>
+							data="category">
 						</sparkline>
 					</div>
 					
@@ -20,15 +19,7 @@
 			</li>
 	  	</ul>
 
-	  	<div>
-	  		Cafeteria: {{ mqttCafeteria }}
-	  	</div>
-
-	  	<div style="color:#000;">
-		  	<input type="text" ng-model="randRow"/>
-		  	<input type="text" ng-model="randLoc"/>
-		  	<input type="button" ng-click="addRandomData()"  value="Random!" />
-		  </div>
+	  	
 
 	</div>
   

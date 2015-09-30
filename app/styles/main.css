@@ -1,3 +1,15 @@
+/* Custom styles */
+.group-icon{
+  color: #9C9C9B;
+  margin-top: 25px;
+  font-size: 3em;
+}
+.row.monitor-category{
+  border-left: 3px solid;
+  border-right: 3px solid;
+  padding-top: 25px;
+}
+
 
 
 /* Custom Bootstrap styles*/
@@ -5,6 +17,7 @@
 .list-group-item{
 	background-color: transparent;
 	border:0px;
+  padding: 0px;
 }
 
 

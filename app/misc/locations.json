@@ -1,0 +1,97 @@
+[
+  {
+    "key":"light",
+    "value": "Luz",
+    "color": "#FED888",
+    "suffix": " lux",
+    "icon":"fa fa-lightbulb-o",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b81703"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b81703","b0b448b84887"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["b0b448b84887"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"lux"
+  },
+  {
+    "key":"temperature",
+    "value": "Temperatura",
+    "color": "#C8175E",
+    "suffix": "˚C",
+    "icon":"wi wi-thermometer",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b81703"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b81703","b0b448b84887"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["b0b448b84887"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"ambient_temperature"
+  },
+  {
+    "key":"humidity",
+    "value": "Humedad",
+    "color": "#009FE8",
+    "suffix": "%",
+    "icon":"wi wi-raindrops",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b81703"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b84887","b0b448b81703"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["b0b448b81703"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"humidity"
+  },
+  {
+    "key":"volume",
+    "value": "Volumen",
+    "color": "#FFFFFF",
+    "suffix": "db",
+    "icon":"fa fa-volume-up",
+    "locations": [
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "generic":["volume"]
+      }
+    ],
+    "mqtt":"quasar/volume",
+    "datum":"volume"
+  }
+
+]
