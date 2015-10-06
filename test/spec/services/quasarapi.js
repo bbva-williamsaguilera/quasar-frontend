@@ -11,8 +11,4 @@ describe('Service: quasarApi', function () {
     quasarApi = _quasarApi_;
   }));
 
-  it('should do something', function () {
-    expect(!!quasarApi).toBe(true);
-  });
-
 });

@@ -33,18 +33,18 @@ angular.module('quasarFrontendApp')
           var sideBarProportion = 0.20;
 
           //Ancho y alto del área de las lineas de la gráfica
-          var width = d3.select(ele[0])[0][0].offsetWidth - (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion),
+          var width = d3.select(ele[0])[0][0].offsetWidth - (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion) - 40,
                 height = 45;
 
           //Ancho y alto total de la gráfica
           var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
-          var totalHeight = 130;
+          var totalHeight = 88;
 
           //Ancho del tag donde se muestra el nombre de las locaciones
-          var tagWidth = (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion) * 0.50;
+          var tagWidth = (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion) * 0.70;
 
           //Margen de las lineas de la gráfica
-          var chartMargin = [15,28];
+          var chartMargin = [15,18];
 
           //Establece el alto de grafica
           svg.attr('height', totalHeight);
@@ -71,12 +71,39 @@ angular.module('quasarFrontendApp')
             return '#' + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
           }
 
+          //gets the maximum and minimum point inside an array
+          function getMaxMinPoint(data, index){
+            var max;
+            var min;
+            var maxValue;
+            var minValue;
+           
+            for (var i=0; i<data.length; i++) {
+              if (typeof max !== 'number' || data[i][index] > maxValue) {
+                max = i;
+                maxValue = data[i][index];
+              }
+
+              if (typeof min !== 'number' || data[i][index] < minValue) {
+                min = i;
+                minValue = data[i][index];
+              }
+            }
+            return {
+              'max':data[max],
+              'min':data[min]
+            };
+          }
+
+          
+
           //Alinea los tags de manera correcta en caso de que solo haya uno
           var totalLocations = scope.data.locations.length;
-          var ySpace = 0;
+          var yBlankSpacing = 0;
           if(totalLocations == 1){
-            ySpace = 40;
+            yBlankSpacing = 40;
           }
+          var ySpace = 30;
 
           //Añade un grupo general de clase svg-perm (permanente) para contener los elementos
           svg.append('g').attr('class', 'svg-perm svg-category-container');
@@ -95,9 +122,9 @@ angular.module('quasarFrontendApp')
                 .attr('class', 'svg-perm title-container')
                 .attr('fill', shadeColor1(scope.data.color, (i*20)))
                 .attr('width', tagWidth)
-                .attr('height', 23)
-                .attr('x', totalWidth-tagWidth-28)
-                .attr('y', i*40 + ySpace);
+                .attr('height', 18)
+                .attr('x', totalWidth-tagWidth)
+                .attr('y', i*ySpace + yBlankSpacing);
 
             svg.select('g.svg-category-container').select('#'+monitor.locations[i].key)
                 .append('rect')
@@ -105,30 +132,21 @@ angular.module('quasarFrontendApp')
                 .attr('fill', 'transparent')
                 .attr('stroke', shadeColor1(scope.data.color, (i*20)))
                 .attr('stroke-width',3)
-                .attr('width', 70)
-                .attr('height', 30)
-                .attr('x', (totalWidth-tagWidth-98))
-                .attr('y', (i*40)+1 + ySpace);
+                .attr('width', 50)
+                .attr('height', 25)
+                .attr('x', (totalWidth-tagWidth-50))
+                .attr('y', (i*ySpace)+1 + yBlankSpacing);
 
             svg.select('g.svg-category-container').select('#'+monitor.locations[i].key)
                 .append('text')
                 .attr('fill', '#000')
-                .attr('x', (totalWidth-tagWidth-25))
-                .attr('y', ((i)*40) + 14 + ySpace)
-                .style('font-size','7px')
+                .attr('x', (totalWidth-tagWidth+5))
+                .attr('y', ((i)*ySpace) + 12 + yBlankSpacing)
+                .style('font-size','6px')
                 .style('font-weight', 'bold')
                 .attr('class', 'svg-perm location-title')
                 .text(monitor.locations[i].name);
           }
-
-          //Cubierta para datos finales
-          /*svg.append('rect')
-            .attr('width',5)
-            .attr('height', height+(chartMargin*2))
-            .attr('y', 0)
-            .attr('x', width-3)
-            .attr('class', 'svg-perm')
-            .fill('#000');*/
 
           //Renderiza la gráfica y los textos asociados
           scope.render = function(data) {
@@ -153,6 +171,44 @@ angular.module('quasarFrontendApp')
                 var y = d3.scale.linear()
                     .range([height+chartMargin[1], chartMargin[1]]);
 
+                //Variable de punto maximo y minimo para cada locación
+                var minMaxPointLocation = [];
+
+                //Establece el dominio de X,Y
+                var minMaxPointX = [undefined, undefined];
+                var minMaxPointY = [undefined, undefined];
+
+                for(var i=0; i<data.locations.length; i++){
+
+                  var dPoint = data.locations[i];
+
+                  var pointX = getMaxMinPoint(dPoint.data,0);
+                  var pointY = getMaxMinPoint(dPoint.data,1);
+
+                  minMaxPointLocation[i] = pointY;
+
+                  if (minMaxPointX[1] == undefined || minMaxPointX[1] < pointX.max[0] ) {
+                    minMaxPointX[1] = pointX.max[0];
+                  }
+                  if (minMaxPointX[0] == undefined || minMaxPointX[0] > pointX.min[0] ) {
+                    minMaxPointX[0] = pointX.min[0];
+                  }
+
+                  if (minMaxPointY[1] == undefined || minMaxPointY[1] < pointY.max[1] ) {
+                    minMaxPointY[1] = pointY.max[1];
+                  }
+                  if (minMaxPointY[0] == undefined || minMaxPointY[0] > pointY.min[1] ) {
+                    minMaxPointY[0] = pointY.min[1];
+                  }
+
+                }
+
+                x.domain([minMaxPointX[0], minMaxPointX[1]]);
+                y.domain([minMaxPointY[0], minMaxPointY[1]]);
+
+                //console.log(data.value,minMaxPointX, minMaxPointY);
+                
+
                 //Funcion de creación de linea, donde el eje X será el valor en la posición 0 del array
                 //... y el valor Y será el valor en la posición 1
                 var line = d3.svg.line()
@@ -173,28 +229,22 @@ angular.module('quasarFrontendApp')
                 var locationValues = [];
 
                 //Por cada locación inserta una linea, y un valor final
-                for(var i=0; i<data.locations.length; i++){
+                for(i=0; i<data.locations.length; i++){
                     if(data.locations[i].data && data.locations[i].data.length > 0){
 
                         var dataPoint = data.locations[i].data;
-                        
+                        /*
                         //Establece el dominio de x y para d3
                         x.domain(d3.extent(dataPoint, function(d) { 
                             return d[0]; 
                         }));
                         y.domain(d3.extent(dataPoint, function(d) { 
                             return d[1]; 
-                        }));
+                        }));*/
 
                         //Variable de punto minimo y maximo para dibujar los circulos
-                        var maxPoint = d3.max(dataPoint, function(d){ 
-                          return [d[1], d[0]]; 
-                        });
-
-                        var minPoint = d3.min(dataPoint, function(d){ 
-                          return [d[1], d[0]]; 
-                        });
-
+                        //var maxMinPoint = getMaxMinPoint(dataPoint,1);
+                        
                         //Inserta la linea
                         svg.insert('path',':first-child')
                             .datum(dataPoint)
@@ -206,31 +256,31 @@ angular.module('quasarFrontendApp')
                         //Inserta los circulos con texto de max y min
                         svg.append('circle')
                           .attr('fill', shadeColor1(scope.data.color, (i*20)))
-                          .attr('cx', x(maxPoint[1]))
-                          .attr('cy', y(maxPoint[0]))
+                          .attr('cx', x(minMaxPointLocation[i].max[0]))
+                          .attr('cy', y(minMaxPointLocation[i].max[1]))
                           .attr('r', 12);
 
                         svg.append('text')
                             .attr('fill', '#000')
-                            .attr('x', x(maxPoint[1]))
-                            .attr('y', y(maxPoint[0])+3)
+                            .attr('x', x(minMaxPointLocation[i].max[0]))
+                            .attr('y', y(minMaxPointLocation[i].max[1])+3)
                             .style('font-size','7px')
                             .attr('text-anchor', 'middle')
-                            .text(Math.round(maxPoint[0]) + data.suffix);
+                            .text(Math.round(minMaxPointLocation[i].max[1]) + data.suffix);
 
                         svg.append('circle')
                           .attr('fill', shadeColor1(scope.data.color, (i*20)))
-                          .attr('cx', x(minPoint[1]))
-                          .attr('cy', y(minPoint[0]))
+                          .attr('cx', x(minMaxPointLocation[i].min[0]))
+                          .attr('cy', y(minMaxPointLocation[i].min[1]))
                           .attr('r', 12);
 
                         svg.append('text')
                             .attr('fill', '#000')
-                            .attr('x', x(minPoint[1]))
-                            .attr('y', y(minPoint[0])+3)
+                            .attr('x', x(minMaxPointLocation[i].min[0]))
+                            .attr('y', y(minMaxPointLocation[i].min[1])+3)
                             .style('font-size','7px')
                             .attr('text-anchor', 'middle')
-                            .text(Math.round(minPoint[0]) + data.suffix);
+                            .text(Math.round(minMaxPointLocation[i].min[1]) + data.suffix);
 
 
 
@@ -242,9 +292,9 @@ angular.module('quasarFrontendApp')
                         svg.select('g.svg-category-container').select('#'+data.locations[i].key)
                             .append('text')
                             .attr('fill', '#fff')
-                            .attr('x', (totalWidth-tagWidth-90))
-                            .attr('y', (i*40) + 22 + ySpace)
-                            .style('font-size','17px')
+                            .attr('x', (totalWidth-tagWidth-45))
+                            .attr('y', (i*ySpace) + 20 + yBlankSpacing)
+                            .style('font-size','13px')
                             .attr('data-value', lastValue)
                             .text(lastValue +data.suffix);
                     }
@@ -268,11 +318,11 @@ angular.module('quasarFrontendApp')
                       var baseTrans = trans;
                       if(!trans){
                         baseTrans = 'translate(0,0)';
-                        newY = 40*dif;
+                        newY = ySpace*dif;
                         trans = 'translate(0,'+newY+')';
                       }else{
                         var curY = trans.substring(trans.lastIndexOf(',')+1,trans.lastIndexOf(')'));
-                        newY = parseFloat(curY) + (40*dif);
+                        newY = parseFloat(curY) + (ySpace*dif);
                         trans = 'translate(0,'+newY+')';
                       }
 
@@ -289,18 +339,18 @@ angular.module('quasarFrontendApp')
                     linePathLastCoord = linePathLastCoord.split(',');
                     
                     //Agrega el triangulo indicador
-                    var yStart = ((i*40) + ySpace)+newY;
+                    var yStart = ((i*ySpace) + yBlankSpacing);
                     var xCoord = cat.select('rect.value-container').attr('x')-1;
                     
                     svg
                       .append('path')
                       .attr('fill', shadeColor1(scope.data.color, (locationValues[i][0]*20)))
-                      .attr('d', 'M'+linePathLastCoord[0]+','+linePathLastCoord[1]+'L'+xCoord+','+yStart+'V'+(yStart + 33)+'Z');
+                      .attr('d', 'M'+linePathLastCoord[0]+','+linePathLastCoord[1]+'L'+xCoord+','+yStart+'V'+(yStart + 27)+'Z');
 
                   }
                 }
 
-            }, renderTimeoutTime);
+            }  , renderTimeoutTime);
           };
         });
       }};

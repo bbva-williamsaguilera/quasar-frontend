@@ -2,24 +2,24 @@
   {
     "key":"light",
     "value": "Luz",
-    "color": "#FED888",
+    "color": "#EDBC3E",
     "suffix": " lux",
     "icon":"fa fa-lightbulb-o",
     "locations": [
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b81703"]
+        "devices":["b0b448b84c06"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b81703","b0b448b84887"]
+        "devices": ["b0b448b81703"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["b0b448b84887"]
+        "devices": ["c4be84717f88"]
       }
     ],
     "mqtt":"quasar/datum",
@@ -28,24 +28,24 @@
   {
     "key":"temperature",
     "value": "Temperatura",
-    "color": "#C8175E",
+    "color": "#AB1D5D",
     "suffix": "˚C",
     "icon":"wi wi-thermometer",
     "locations": [
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b81703"]
+        "devices":["b0b448b84c06"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b81703","b0b448b84887"]
+        "devices": ["b0b448b81703"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["b0b448b84887"]
+        "devices": ["c4be84717f88"]
       }
     ],
     "mqtt":"quasar/datum",
@@ -54,24 +54,24 @@
   {
     "key":"humidity",
     "value": "Humedad",
-    "color": "#009FE8",
+    "color": "#009DE4",
     "suffix": "%",
     "icon":"wi wi-raindrops",
     "locations": [
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b81703"]
+        "devices":["b0b448b84c06"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b84887","b0b448b81703"]
+        "devices": ["b0b448b81703"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["b0b448b81703"]
+        "devices": ["c4be84717f88"]
       }
     ],
     "mqtt":"quasar/datum",

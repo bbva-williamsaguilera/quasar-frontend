@@ -1,26 +1,201 @@
+/* General Styles */
+@font-face {
+  font-family: 'BBVA Light';
+  src: url('font/bbvaweb-light.eot');
+  src: url('font/bbvaweb-light.woff') format('woff'), 
+       url('font/bbvaweb-light.ttf')  format('truetype'),
+       url('font/bbvaweb-light.svg#BBVA Web Light') format('svg');
+}
+
+@font-face {
+  font-family: 'BBVA Light';
+  src: url('font/bbvaweb-medium.eot');
+  src: url('font/bbvaweb-medium.woff') format('woff'), 
+       url('font/bbvaweb-medium.ttf')  format('truetype'),
+       url('font/bbvaweb-medium.svg#BBVA Web Light') format('svg');
+  font-weight: bold;
+}
+
+body {
+  padding: 0;
+  background-color: #000;
+  color:#FFF;
+  font-family: 'BBVA Light', Helvetica,Arial,sans-serif;
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
+  
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-right: 10px;
+  float: left;
+}
+
+h1{
+  font-size: 28px;
+  font-weight: bold;
+}
+
+h2{
+  font-size: 28px;
+  font-weight:normal;
+}
+
+h3{
+  font-size: 20px;
+  font-weight:bold;
+  margin-top: 14px;
+}
+
+h4{
+  font-size: 20px;
+  font-weight:normal;
+  margin-top: 15px
+}
+
+
 /* Custom styles */
+
+.col-gauges .row {
+    font-size: 10px;
+    line-height: 10px;
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.ponencia-container{
+    background-color: #fff;
+    color: #000;
+    font-size: 9px;
+    height: 83px;
+    margin-right: 14px;
+    margin-top: -7px;
+    padding: 4px;
+}
+
+.metric-tag:first-of-type {
+    margin-left: 0;
+}
+.metric-tag {
+    display: inline-block;
+    font-size: 10px;
+    line-height: 10px;
+    margin-left: 12px;
+    text-align: left;
+    text-transform: uppercase;
+    width: 67px;
+}
+
+.metric-value-high {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-left: 15px;
+  margin-right: -4px;
+}
+
+.metric-value-low{
+  font-size: 0.7em;
+}
+
+.row.free-metrics{
+  margin-top: 28px;
+}
+
+
+img.apihourlogo{
+  margin-left: 0px;
+  margin-top: 10px;
+  width: 50%;
+}
+
 .group-icon{
   color: #9C9C9B;
-  margin-top: 25px;
-  font-size: 3em;
+  color: #FFF;
+  margin-top: 23px;
+  font-size: 1.3em;
+  margin-top: 1.7em;
+}
+.row.constantes-title{
+  margin-top: 15px;
+  margin-bottom: 28px;
 }
 .row.monitor-category{
-  border-left: 3px solid;
-  border-right: 3px solid;
-  padding-top: 25px;
+  border-left: 6px solid;
+  border-right: 6px solid;
+  padding-top: 10px;
+}
+.row.talks{
+  height: 125px;
+  border-left: 6px solid;
+  border-right: 6px solid;
+  border-color: #3E3E3D;
+}
+
+.row.metrics{
+  height: 153px;
+  border-left: 6px solid;
+  border-right: 6px solid;
+  border-color: #3E3E3D;
+  padding-top: 10px;
+  font-size: 9px;
+}
+.row.metrics-list{
+  margin-top: 9px;
+  margin-bottom: 5px;
+}
+.metric-sm{
+  font-size: 7px;
+}
+span.metrics-title{
+  font-size: 12px;
+  line-height: 1;
+}
+.lecture-div {
+    font-size: 9px;
+    position: absolute;
+    text-align: center;
+    width: 30px;
+}
+.sep {
+  background-color: rgba(255, 255, 255, 0.12);
+  height: 426px;
+  margin-left: 50%;
+  margin-top: -50px;
+  width: 2px;
+  z-index: 1;
+}
+.sep > div{
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  bottom: -10px;
+  height: 10px;
+  left: 11px;
+  position: absolute;
+  width: 10px;
+}
+
+.lecture-time {
+    display: inline-block;
+    margin-bottom: 13px;
+}
+.lecture-title {
+    display: block;
+    font-size: 0.8em;
+    line-height: 8px;
+    margin-top: 6px;
 }
 
 
 
 /* Custom Bootstrap styles*/
-
 .list-group-item{
 	background-color: transparent;
 	border:0px;
   padding: 0px;
 }
-
-
+.list-group{
+  margin-bottom: 0px;
+}
 
 
 /* SVG Styles */
@@ -55,95 +230,9 @@
 }
 
 
-
-
-
-
-
-
-/* Yeoman Styles TODO Quitarlos */
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
-body {
-  padding: 0;
-  background-color: #000;
-  color:#FFF;
-}
-
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-  padding-left: 15px;
-  padding-right: 15px;
-}
-
-/* Custom page header */
-.header {
-  border-bottom: 1px solid #e5e5e5;
-  margin-bottom: 10px;
-}
-/* Make the masthead heading the same height as the navigation */
-.header h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 40px;
-  padding-bottom: 19px;
-}
-
-/* Custom page footer */
-.footer {
-  padding-top: 19px;
-  color: #777;
-  border-top: 1px solid #e5e5e5;
-}
-
-.container-narrow > hr {
-  margin: 30px 0;
-}
-
-/* Main marketing message and sign up button */
-.jumbotron {
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
-}
-
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
     max-width: 730px;
-  }
-
-  /* Remove the padding we set earlier */
-  .header,
-  .marketing,
-  .footer {
-    padding-left: 0;
-    padding-right: 0;
-  }
-  /* Space out the masthead */
-  .header {
-    margin-bottom: 30px;
-  }
-  /* Remove the bottom border on the jumbotron for visual effect */
-  .jumbotron {
-    border-bottom: 0;
   }
 }

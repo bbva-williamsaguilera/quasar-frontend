@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: sparkline', function () {
+describe('Directive: floorMap', function () {
 
   // load the directive's module
   beforeEach(module('quasarFrontendApp'));
@@ -13,8 +13,8 @@ describe('Directive: sparkline', function () {
   }));
 
   it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<sparkline></sparkline>');
+    element = angular.element('<floor-map></floor-map>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the sparkline directive');
+    expect(element.text()).toBe('this is the floorMap directive');
   }));
 });

@@ -18,8 +18,8 @@ angular.module('quasarFrontendApp')
 			host = 'http://52.18.80.55/api/';	
 		}
 
-		var today = moment().subtract(1,'days').format('YYYY-MM-DD');
-		var limit = 2000;
+		var today = moment().subtract((5+2),'hours').format('YYYY-MM-DD hh:mm:ss');
+		var limit = 500;
 
 
 		function getDevices(){
@@ -30,9 +30,16 @@ angular.module('quasarFrontendApp')
 			return $http.get(host+'datum?device='+device+'&after='+today+'&limit='+limit);
 		}
 
-		function getGenericData(generic){
-			return $http.get(host+'generic/'+generic+'?after='+today+'&limit='+limit);
+		function getGenericData(generic,extra){
+			if(extra != undefined){
+				extra = '/'+extra;
+			}else{
+				extra = '';
+			}
+			return $http.get(host+'generic/'+generic+extra+'?after='+today+'&limit='+limit);
 		}
+
+
 
 		return {
 			getDevices: getDevices,

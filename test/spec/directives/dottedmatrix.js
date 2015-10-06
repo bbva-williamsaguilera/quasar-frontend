@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: barChart', function () {
+describe('Directive: dottedMatrix', function () {
 
   // load the directive's module
   beforeEach(module('quasarFrontendApp'));
@@ -13,8 +13,8 @@ describe('Directive: barChart', function () {
   }));
 
   it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<bar-chart></bar-chart>');
+    element = angular.element('<dotted-matrix></dotted-matrix>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the barChart directive');
+    expect(element.text()).toBe('this is the dottedMatrix directive');
   }));
 });
