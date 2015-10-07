@@ -126,7 +126,7 @@ angular.module('quasarFrontendApp')
 
           svg.append('text')
             .attr('fill', '#FFF')
-            .attr('x', ((totalWidth/2)-4)+(actualValue.toString().length * 9))
+            .attr('x', ((totalWidth/2)-4)+(2 * 9))
             .attr('y', totalHeight-7)
             .style('font-size','13px')
             .attr('text-anchor', 'middle')
@@ -137,7 +137,7 @@ angular.module('quasarFrontendApp')
           //Actualiza la gráfica y los textos asociados
           scope.updateActual = function(valorActual) {
             //Si no hay parametros no continúa
-            if (!actualValue) {
+            if (!valorActual) {
                 return;
             }
 

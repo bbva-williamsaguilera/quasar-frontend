@@ -18,7 +18,7 @@ angular.module('quasarFrontendApp')
 			host = 'http://52.18.80.55/api/';	
 		}
 
-		var today = moment().subtract((5+2),'hours').format('YYYY-MM-DD hh:mm:ss');
+		var today = moment().subtract((4+2),'hours').format('YYYY-MM-DD hh:mm:ss');
 		var limit = 500;
 
 
@@ -39,11 +39,14 @@ angular.module('quasarFrontendApp')
 			return $http.get(host+'generic/'+generic+extra+'?after='+today+'&limit='+limit);
 		}
 
-
+		function getScheduleData(){
+			return $http.get(host+'generic/schedule?limit=100');
+		}
 
 		return {
 			getDevices: getDevices,
 			getSensorData: getSensorData,
-			getGenericData: getGenericData
+			getGenericData: getGenericData,
+			getScheduleData: getScheduleData
 		};
 	}]);

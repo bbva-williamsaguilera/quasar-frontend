@@ -77,22 +77,28 @@ angular.module('quasarFrontendApp')
             var min;
             var maxValue;
             var minValue;
-           
-            for (var i=0; i<data.length; i++) {
-              if (typeof max !== 'number' || data[i][index] > maxValue) {
-                max = i;
-                maxValue = data[i][index];
-              }
+            if(data && data.length > 0){
+              for (var i=0; i<data.length; i++) {
+                if (typeof max !== 'number' || data[i][index] > maxValue) {
+                  max = i;
+                  maxValue = data[i][index];
+                }
 
-              if (typeof min !== 'number' || data[i][index] < minValue) {
-                min = i;
-                minValue = data[i][index];
+                if (typeof min !== 'number' || data[i][index] < minValue) {
+                  min = i;
+                  minValue = data[i][index];
+                }
+              }
+              return {
+                'max':data[max],
+                'min':data[min]
+              };
+            }else{
+              return {
+                'max':null,
+                'min':null
               }
             }
-            return {
-              'max':data[max],
-              'min':data[min]
-            };
           }
 
           
@@ -160,6 +166,8 @@ angular.module('quasarFrontendApp')
                 clearTimeout(renderTimeout);
             } 
 
+
+
             //renderiza dentro del tiempo especificado
             renderTimeout = $timeout(function() {
 
@@ -178,35 +186,36 @@ angular.module('quasarFrontendApp')
                 var minMaxPointX = [undefined, undefined];
                 var minMaxPointY = [undefined, undefined];
 
+                
                 for(var i=0; i<data.locations.length; i++){
 
                   var dPoint = data.locations[i];
+                  
+                  if(dPoint.data && dPoint.data.length > 0){
+                    var pointX = getMaxMinPoint(dPoint.data,0);
+                    var pointY = getMaxMinPoint(dPoint.data,1);
 
-                  var pointX = getMaxMinPoint(dPoint.data,0);
-                  var pointY = getMaxMinPoint(dPoint.data,1);
+                    minMaxPointLocation[i] = pointY;
 
-                  minMaxPointLocation[i] = pointY;
+                    if (minMaxPointX[1] == undefined || minMaxPointX[1] < pointX.max[0] ) {
+                      minMaxPointX[1] = pointX.max[0];
+                    }
+                    if (minMaxPointX[0] == undefined || minMaxPointX[0] > pointX.min[0] ) {
+                      minMaxPointX[0] = pointX.min[0];
+                    }
 
-                  if (minMaxPointX[1] == undefined || minMaxPointX[1] < pointX.max[0] ) {
-                    minMaxPointX[1] = pointX.max[0];
-                  }
-                  if (minMaxPointX[0] == undefined || minMaxPointX[0] > pointX.min[0] ) {
-                    minMaxPointX[0] = pointX.min[0];
-                  }
-
-                  if (minMaxPointY[1] == undefined || minMaxPointY[1] < pointY.max[1] ) {
-                    minMaxPointY[1] = pointY.max[1];
-                  }
-                  if (minMaxPointY[0] == undefined || minMaxPointY[0] > pointY.min[1] ) {
-                    minMaxPointY[0] = pointY.min[1];
+                    if (minMaxPointY[1] == undefined || minMaxPointY[1] < pointY.max[1] ) {
+                      minMaxPointY[1] = pointY.max[1];
+                    }
+                    if (minMaxPointY[0] == undefined || minMaxPointY[0] > pointY.min[1] ) {
+                      minMaxPointY[0] = pointY.min[1];
+                    }
                   }
 
                 }
 
                 x.domain([minMaxPointX[0], minMaxPointX[1]]);
                 y.domain([minMaxPointY[0], minMaxPointY[1]]);
-
-                //console.log(data.value,minMaxPointX, minMaxPointY);
                 
 
                 //Funcion de creación de linea, donde el eje X será el valor en la posición 0 del array

@@ -15,13 +15,14 @@ angular.module('quasarFrontendApp')
         $scope.monitorize = [];
         $scope.monitorizeData = [];
         $scope.dataPushTimer = 2000; //Milisegundos a esperar para hacer el push de la data a los gráficos
-        $scope.hour = moment().format('HH:mm');
+        $scope.testHoursToAdd = 0;
+        $scope.hour = moment().add($scope.testHoursToAdd,'hours').format('HH:mm');
         $scope.cDay = moment().format('D MMM');
         $scope.schedule = [];
         $scope.currentTalks = [];
 
-        $scope.hoursToMonitorize = 5; //Total de horas que se van a monitorizar en el dashboard
-        $scope.lastMonitorizedMoment = moment().subtract($scope.hoursToMonitorize, 'hours');
+        $scope.hoursToMonitorize = 4; //Total de horas que se van a monitorizar en el dashboard
+        $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
         //Variables de control de carga
         $scope.loadState = {
@@ -36,15 +37,96 @@ angular.module('quasarFrontendApp')
     	};
 
         //Distintas metricas
+        $scope.tweetData = [
+            {
+                'title': '#APIHour',
+                'data' : [
+                    { 
+                        'tag':'Yesterday',
+                        'value':5,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Today',
+                        'value':48,
+                        'color': '#9BC741'
+                    }
+                ] 
+            },
+            {
+                'title': '@Fernandoelsoso',
+                'data' : [
+                    { 
+                        'tag':'Yesterday',
+                        'value':10,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Today',
+                        'value':50,
+                        'color': '#9BC741'
+                    }
+                ] 
+            }
+
+        ];
+
+
+        $scope.wifiData = [
+            {
+                'title': '',
+                'data' : [
+                    { 
+                        'tag':'Friday',
+                        'value':423,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Saturday',
+                        'value':38,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Sunday',
+                        'value':27,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Monday',
+                        'value':437,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Tuesday',
+                        'value':443,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'Wednesday',
+                        'value':439,
+                        'color': '#3E3E3D'
+                    },
+                    { 
+                        'tag':'API Hour',
+                        'value':650,
+                        'color': '#9BC741'
+                    }
+                ] 
+            }
+
+        ];
+
         $scope.metrics = {
+            'costeElectrico':[50,60,70,20,60,20,30,70,50,30,60,30],
+            'esperaCafeteria':'5:23',
             'asistentes': {
                 'total':150,
                 'actual':112
             },
             'ocupacion':{
-                'planta1':29,
-                'planta2':62,
-                'planta3':90
+                'planta1':10,
+                'planta2':8,
+                'planta3':5
             },
             /*'disponibilidad':{
                 'mujer':[0,7],
@@ -150,8 +232,18 @@ angular.module('quasarFrontendApp')
 
         //Si no se ha cargado el schedule, cargarlo
         if($scope.loadState.schedule != true){
-            quasarApi.getGenericData('schedule').then(function(response){
+            quasarApi.getScheduleData().then(function(response){
                 $scope.schedule = response.data;
+                $scope.schedule.sort(function(a,b){ 
+                    var aHour = a.hour.split(':');
+                    var bHour = b.hour.split(':');
+
+                    if(aHour[0] == bHour[0]){
+                        return aHour[1]-bHour[1];
+                    }
+
+                    return aHour[0]-bHour[0];
+                })
                 angular.forEach($scope.schedule, function(talk){
                     if(talk.speaker){
                         quasarApi.getGenericData('speaker',talk.speaker).then(function(response){
@@ -162,6 +254,7 @@ angular.module('quasarFrontendApp')
                     }
                 });
                 $scope.loadState.schedule = true;
+                $scope.loadCurrentTalks();
 
             }, function(error){
                 console.log('Fallo al cargar el programa del evento '+error);
@@ -169,19 +262,107 @@ angular.module('quasarFrontendApp')
         }
 
         //Funcion a ejecutarse cada minuto
+        
         $scope.tick = function(){
-            $scope.hour = moment().format('HH:mm');
-            $scope.lastMonitorizedMoment = moment().subtract($scope.hoursToMonitorize, 'hours');
+            $scope.hour = moment().add($scope.testHoursToAdd, 'hours').format('HH:mm');
+            $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
-            $scope.loadCurrentTalks();
+            //$scope.loadCurrentTalks();
+            //$scope.cleanMonitorData();
+
+            $scope.randomizeData();
             
-
         };
-        $interval($scope.tick, 60000);
+        $interval($scope.tick, 6000);
+
+        $scope.randomCounter = 0;
+        $scope.randomizeData = function(){
+            
+            if($scope.randomCounter >= 3){
+                
+                $scope.randomCounter = 0;
+
+                //randoms true or false de los baños
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-minus'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['tower2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['coconut2'] = !(Math.random()+.5|0);
+
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-minus'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['tower1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['coconut1'] = !(Math.random()+.5|0);
+
+                $scope.metrics.detalleOcupacion[2].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[2].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[2].ocupacion['creative-room'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[2].ocupacion['war-room'] = !(Math.random()+.5|0);
+
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-minus'] = !(Math.random()+.5|0);
+
+                $scope.checkAvailability();
+   
+            }
+
+            //random del numero de ocupacion por planta
+            $scope.metrics.ocupacion.planta1 = randomOcupacionInTime($scope.metrics.ocupacion.planta1,1,5);
+            $scope.metrics.ocupacion.planta2 = randomOcupacionInTime($scope.metrics.ocupacion.planta2,1,5);
+            $scope.metrics.ocupacion.planta3 = randomOcupacionInTime($scope.metrics.ocupacion.planta3,1,5);
+
+
+            $scope.randomCounter++;
+        };
+
+        function randomOcupacionInTime(valActual,min,max){
+            var horaActual = $scope.hour.split(':')[0];
+
+            var dataVal = [
+                //Formato [horaDeInicio, horaDeFin, minPorcentaje, maxPorcentaje]
+                [9,12,81,92],
+                [13,14,28,32],
+                [15,17,67,83],
+                [18,18,25,43],
+                [19,21,11,18]
+            ];
+            var porcentaje = [];
+            for(var i=0; i<dataVal.length; i++){
+                
+                if(horaActual >= dataVal[i][0] && horaActual <= dataVal[i][1]){
+                    porcentaje[0] = dataVal[i][2];
+                    porcentaje[1] = dataVal[i][3];
+                    break;
+                }
+            }
+            
+            if(valActual <= porcentaje[0]){
+                valActual += Math.random() * (max - min) + min;
+            }else{
+                if(valActual >= porcentaje[1]){
+                   valActual -= Math.random() * (max - min) + min; 
+                }else{
+                    valActual += Math.random() * (max - (-max)) + (-max);
+                }
+            }
+
+            return Math.round(valActual);
+
+
+        }
 
         //Carga las ponencias que se están llevando a cabo dentro de la ventana de monitorización
         $scope.loadCurrentTalks = function(){
             if($scope.loadState.schedule == true){
+
                 $scope.currentTalks = [];
                 var currentTime = $scope.hour.split(':');
                 currentTime = moment().hour(currentTime[0]).minute(currentTime[1]);
@@ -199,15 +380,59 @@ angular.module('quasarFrontendApp')
 
 
                         var talkMinus = moment(talkHour).format('x') - moment($scope.lastMonitorizedMoment).format('x');
-                        var talkPosition = (talkMinus * 90) / currentLapse;
-                        console.log(talkHour, $scope.lastMonitorizedMoment, talkMinus, currentLapse);
-
+                        var talkPosition = (talkMinus * 95) / currentLapse;
+                        
                         talk.relativePosition = Math.round(talkPosition*100)/100;
 
+
+                        switch(talk.talk){
+                            case 'COFFEE BREAK':
+                                talk.image = 'images/lecture-coffee.png';
+                                break;
+                            case 'LUNCH & NETWORKING':
+                                talk.image = 'images/lecture-lunch.png';
+                                break;
+                            case 'MESA REDONDA: IoT dónde estamos y hacia dónde vamos':
+                                talk.image = 'images/lecture-mesa.png';
+                                break;
+                            case 'Recepción y acreditaciones':
+                                talk.image = 'images/lecture-entrada.png';
+                                break;
+                            default:
+                                talk.image = 'images/lecture-mesa.png';
+                        }
+
                         $scope.currentTalks.push(talk);
-                        console.log(talk);
+                        //console.log(talk);
                     }
                 });
+
+                //SORT currentTalksArray by relativePosition
+                $scope.currentTalks.sort(function(a,b){ return a.relativePosition - b.relativePosition; })
+
+            }
+        }
+
+        //Descarta los datos que sean mas viejos que el periodo a monitorizar
+        $scope.cleanMonitorData = function(){
+            if($scope.monitorizeData.length > 0){
+                var initialTime = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize+2, 'hours').format('x');
+                for(var i=0; i<$scope.monitorizeData.length; i++){
+                    for(var y=0; y<$scope.monitorizeData[i].locations.length; y++){
+                        var loc = $scope.monitorizeData[i].locations[y];
+                        if(loc.data && loc.data.length > 0){
+                            var cnt = 0;
+                            for(var x=0; x<loc.data.length; x++){
+                                if(loc.data[x][0] >= initialTime){
+                                    break;
+                                }else{
+                                    cnt++;
+                                }
+                            }
+                            loc.data.splice(0,cnt);
+                        }
+                    }
+                }
             }
         }
 
@@ -517,6 +742,26 @@ angular.module('quasarFrontendApp')
             }
     		
     	};
+
+        //devuelve el width de un elemento entre 2 horas con la hora actual
+        $scope.getCurrentTimeWidth = function(startHour, endHour){
+            if(startHour != undefined && endHour != undefined){
+                var currentHour = $scope.hour.split(':');
+                startHour = startHour.split(':');
+                endHour = endHour.split(':');
+
+                currentHour = moment().hour(currentHour[0]).minute(currentHour[1]).format('x');
+                startHour = moment().hour(startHour[0]).minute(startHour[1]).format('x');
+                endHour = moment().hour(endHour[0]).minute(endHour[1]).format('x');
+
+                var lapse = endHour - startHour;
+                var currentHour = currentHour-startHour;
+                return Math.round((currentHour*100)/lapse);
+            }else{
+                return 0;
+            }
+            
+        };
 	
   }]);
 

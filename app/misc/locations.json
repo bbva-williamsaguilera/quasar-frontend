@@ -85,8 +85,8 @@
     "icon":"fa fa-volume-up",
     "locations": [
       {
-        "key":"patio",
-        "name": "PATIO DE COLUMNAS",
+        "key":"auditorio",
+        "name": "AUDITORIO",
         "generic":["volume"]
       }
     ],

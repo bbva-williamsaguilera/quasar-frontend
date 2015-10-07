@@ -13,11 +13,11 @@
 
 		<div class="row">
 			<div class="col-md-8">
-				
+				<!-- 
 				<floor-map 
 					src='images/plantas-dashboard.png'
 					occupancy='metrics.detalleOcupacion'>
-				</floor-map> 
+				</floor-map>  -->
 			</div>
 
 			<div class="col-md-3 col-gauges">
@@ -104,12 +104,12 @@
 				</span>
 				
 				<span class="metric-value-regular">
-					<i class="fa fa-play fa-rotate-90"></i>
+					<i class="fa fa-play fa-rotate-270"></i>
 					{{ metrics.edificio.entradas }}
 				</span>
 				
 				<span class="metric-value-regular">
-					<i class="fa fa-play fa-rotate-270"></i>
+					<i class="fa fa-play fa-rotate-90"></i>
 					{{ metrics.edificio.salidas }}
 				</span>
 
@@ -124,11 +124,18 @@
 				<!-- Titulo -->
 				<div class="row">
 	  			<div class="col-md-12">
-			  		<span class="metrics-title">
-			  			Consumo de energía
-			  		</span>
+	  				<center>
+				  		<span class="metrics-title">
+				  			Energy consumption
+				  		</span>
+			  		</center>
 			  	</div>
 		  	</div>
+		  	<!-- 
+		  	<electric-gauge
+		  		data="metrics.costeElectrico"
+		  		height="175">
+		  	</electric-gauge> -->
 
 			</div>
 			<div class="col-md-4">
@@ -136,11 +143,19 @@
 				<!-- Titulo -->
 				<div class="row">
 	  			<div class="col-md-12">
-			  		<span class="metrics-title">
-			  			Tiempo de espera en cafetería
-			  		</span>
+	  				<center>
+				  		<span class="metrics-title">
+				  			Coffee room waiting time
+				  		</span>
+				  	</center>
 			  	</div>
 		  	</div>
+		  	<br/>
+		  	<!-- 
+		  	<wait-clock
+		  		time="metrics.esperaCafeteria"
+		  		height="145">
+		  	</wait-clock> -->
 
 			</div>
 			<div class="col-md-4">
@@ -148,11 +163,19 @@
 				<!-- Titulo -->
 				<div class="row">
 	  			<div class="col-md-12">
-			  		<span class="metrics-title">
-			  			Dispositivos conectados al wifi
-			  		</span>
+	  				<center>
+				  		<span class="metrics-title">
+				  			Devices connected to the WiFi
+				  		</span>
+				  	</center>
 			  	</div>
 		  	</div>
+		  	<!-- 
+		  	<dual-graph
+	  			data="wifiData"
+	  			height="145">
+	  		</dual-graph> -->
+
 
 			</div>
 
@@ -180,13 +203,21 @@
 							<div class="col-md-12">
 
 
-								<div class="lecture-div" ng-repeat="talk in currentTalks" style="left:{{talk.relativePosition}}%;">
-								  <span class="lecture-time">{{talk.hout}}</span>
+								<div class="lecture-div" ng-repeat="talk in currentTalks" style="left:{{talk.relativePosition}}%;" ng-hide="$last">
 
 
-									<img 
-										src="http://www.theapihour.com/wp-content/uploads/2015/08/idc-jose-antonio-lorenzo.jpg" class="img-responsive img-circle"/>
-									<span class="lecture-title">{{talk.talk}}</span>
+								  <span class="lecture-time">{{talk.hour}}</span>
+
+
+									<img ng-if="talk.speaker"
+										ng-src="{{talk.speaker.image}}" class="img-responsive img-circle"/>
+
+									<img ng-if="!talk.speaker"
+										ng-src="{{talk.image}}" 
+										class="img-responsive img-circle"/>
+								
+									<span ng-if="talk.speaker" class="lecture-title">{{talk.speaker.name}}</span>
+									<span ng-if="!talk.speaker" class="lecture-title">{{ (talk.talk) }}</span>
 									<div class="sep"><div></div></div>
 								</div>
 
@@ -207,29 +238,49 @@
 								<!-- Row de foto, nombre y empresa -->
 								<div class="row">
 									<div class="col-md-2" style="padding:0px;">
-										<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
+
+
+										<img 
+											ng-if="currentTalks[currentTalks.length-1].speaker" 
+											class="img-responsive img-circle" 
+											ng-src="{{currentTalks[currentTalks.length-1].speaker.image}}"/>
+
+										<img ng-if="!currentTalks[currentTalks.length-1].speaker"
+											ng-src="{{currentTalks[currentTalks.length-1].image}}" 
+											class="img-responsive img-circle"/>
 									</div>
-									<div class="col-md-10" style="padding: 0px; padding-left: 5px">
-										<strong>José Manuel de la Chica</strong><br/>
-										BBVA
+									<div 
+										class="col-md-10" 
+										style="padding: 0px; padding-left: 5px"
+										ng-if="currentTalks[currentTalks.length-1].speaker">
+										<strong>{{ currentTalks[currentTalks.length-1].speaker.name }}</strong><br/>
+										{{currentTalks[currentTalks.length-1].speaker.company}}
 									</div>
 								</div>
 
 								<!-- Row de nombre de la ponencia -->
 								<div class="row">
 									<div class="col-md-12" style="padding:0px; margin-top:3px;">
-										10 experiencias de la vida que IoT y una buena API deberían mejorar
+										{{currentTalks[currentTalks.length-1].talk}}
 									</div>
 								</div>
+							</div>
 
-								<!-- Row de duración de la ponencia -->
+							<div class="ponencia-length">
 								<div class="row">
-									<div class="col-md-12">
-										<!-- TODO directive para duración de ponencia -->
+									<div class="col-md-1" style="padding:0px; padding-left:17px">
+										{{currentTalks[currentTalks.length-1].hour}}
+									</div>
+									<div class="col-md-1 col-md-offset-8" style="padding:0px; padding-left: 8px">
+										{{schedule[currentTalks.length].hour}}
 									</div>
 								</div>
-
-
+								<div class="row"> 
+									<div class="col-md-12 length-bar">
+										<div class="bar-fondo"></div>
+										<div class="bar-fondo duration" style="width:{{ getCurrentTimeWidth(currentTalks[currentTalks.length-1].hour, schedule[currentTalks.length].hour) }}%;"></div>
+									</div>
+								</div>
 							</div>
 						</div>
 
@@ -247,10 +298,10 @@
 					
 					<div class="col-md-11" style="padding-left:0px;">
 						
-						 
+						<!-- 
 						<sparkline
 							data="category">
-						</sparkline>
+						</sparkline> -->
 					</div>
 					
 				</div>
@@ -264,7 +315,7 @@
 	  		<div class="row">
 	  			<div class="col-md-12">
 			  		<span class="metrics-title">
-			  			Charla más <br>ruidosa del día
+			  			Loudest talk <br>of the day
 			  		</span>
 			  	</div>
 		  	</div>
@@ -278,7 +329,7 @@
 		  		<div class="col-md-9" style="padding-left: 4px">
 		  			José Manuel de la Chica
 		  			<br>
-		  			<span class="metric-sm">máximo:80dB media:65dB</span>
+		  			<span class="metric-sm">max:80dB</span>
 		  		</div>
 		  	</div>
 		  	<div class="row metrics-list">
@@ -288,7 +339,7 @@
 		  		<div class="col-md-9" style="padding-left: 4px">
 		  			José Manuel de la Chica
 		  			<br>
-		  			<span class="metric-sm">máximo:80dB media:65dB</span>
+		  			<span class="metric-sm">máximo:80dB</span>
 		  		</div>
 		  	</div>
 		  	<div class="row metrics-list">
@@ -298,7 +349,7 @@
 		  		<div class="col-md-9" style="padding-left: 4px">
 		  			José Manuel de la Chica
 		  			<br>
-		  			<span class="metric-sm">máximo:80dB media:65dB</span>
+		  			<span class="metric-sm">máximo:80dB</span>
 		  		</div>
 		  	</div>
 
@@ -310,7 +361,7 @@
 	  		<div class="row">
 	  			<div class="col-md-12">
 			  		<span class="metrics-title">
-			  			Momento con <br>más afluencia
+			  			Highest attendance <br>talk
 			  		</span>
 			  	</div>
 		  	</div>
@@ -359,26 +410,30 @@
 	  		<div class="row">
 	  			<div class="col-md-12">
 			  		<span class="metrics-title">
-			  			Asistentes <br>al evento
+			  			Event <br>attendance
 			  		</span>
 			  	</div>
 		  	</div>
 
 		  	<div class="row">
 
-		  		
+		  		<!-- 
 		  		<dotted-matrix
 		  			total="metrics.asistentes.total"
 		  			actual="metrics.asistentes.actual"
-		  		></dotted-matrix> 
+		  		></dotted-matrix>  -->
 		  	</div>
 
 	  	</div>
 
 	  	<div class="col-md-3">
 	  		<span class="metrics-title">
-	  			Número de <br>tweets
+	  			Number of <br>tweets
 	  		</span>
+	  		 <!-- 
+	  		<dual-graph
+	  			data="tweetData">
+	  		</dual-graph> -->
 
 	  	</div>
 	  	
