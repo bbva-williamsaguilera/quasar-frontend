@@ -24,6 +24,13 @@ angular.module('quasarFrontendApp')
         $scope.hoursToMonitorize = 4; //Total de horas que se van a monitorizar en el dashboard
         $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
+
+        $scope.highestVolume = new Array(3);
+        $scope.highestAttendance = new Array(3);
+
+        $scope.loudestTalks = [];
+        $scope.busiestTalks = [];
+
         //Variables de control de carga
         $scope.loadState = {
             'locations': false,
@@ -48,7 +55,7 @@ angular.module('quasarFrontendApp')
                     },
                     { 
                         'tag':'Today',
-                        'value':48,
+                        'value':0,
                         'color': '#9BC741'
                     }
                 ] 
@@ -63,7 +70,7 @@ angular.module('quasarFrontendApp')
                     },
                     { 
                         'tag':'Today',
-                        'value':50,
+                        'value':0,
                         'color': '#9BC741'
                     }
                 ] 
@@ -108,7 +115,7 @@ angular.module('quasarFrontendApp')
                     },
                     { 
                         'tag':'API Hour',
-                        'value':650,
+                        'value':50,
                         'color': '#9BC741'
                     }
                 ] 
@@ -219,6 +226,32 @@ angular.module('quasarFrontendApp')
         };
         $scope.checkAvailability();
 
+        //Revisa la cantidad de asistentes en este momento
+        $scope.checkAssistance = function(){
+            var newActual = $scope.metrics.asistentes.actual;
+            var cDate = parseInt(moment().format('x'));
+            if($scope.highestAttendance[0] == undefined || $scope.highestAttendance[0].value < newActual){
+                $scope.highestAttendance[0] = {
+                    'date':cDate,
+                    'value':newActual
+                };
+            }else{
+                if($scope.highestAttendance[1] == undefined || $scope.highestAttendance[1].value < newActual){
+                    $scope.highestAttendance[1] = {
+                        'date':cDate,
+                        'value':newActual
+                    };
+                }else{
+                    if($scope.highestAttendance[2] == undefined || $scope.highestAttendance[2].value < newActual){
+                        $scope.highestAttendance[2] = {
+                            'date':cDate,
+                            'value':newActual
+                        };
+                    }
+                }
+            }
+        };
+
 
         //Si no se han cargado las locaciones las trae desde el archivo externo JSON
         if($scope.loadState.locations != true){
@@ -272,13 +305,44 @@ angular.module('quasarFrontendApp')
             $scope.hour = moment().add($scope.testHoursToAdd, 'hours').format('HH:mm');
             $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
-            $scope.loadCurrentTalks();
-            $scope.cleanMonitorData();
-
-            $scope.randomizeData();
+            //$scope.loadCurrentTalks();
+            //$scope.cleanMonitorData();
+            $scope.checkLoudestBusiestTalks();
+            //$scope.randomizeData();
             
         };
-        $interval($scope.tick, 6000);
+        $interval($scope.tick, 60000);
+
+        $scope.checkLoudestBusiestTalks = function(){
+            angular.forEach($scope.schedule, function(talk, key){
+                var talkTime = talk.hour.split(':');
+                var talkFinish = talk.endHour.split(':');
+
+                var talkStart = moment().hour(talkTime[0]).minute(talkTime[1]);
+                var talkEnd = moment().hour(talkFinish[0]).minute(talkFinish[1]);
+
+                
+                for(var i=0; i<$scope.highestVolume.length; i++){
+                    if($scope.highestVolume[i] !== undefined){
+                        if(moment($scope.highestVolume[i].date).isBetween(talkStart,talkEnd)){  
+                            $scope.loudestTalks[i] = talk;
+                            $scope.loudestTalks[i].volume = Math.round($scope.highestVolume[i].value);
+                        }
+                    } 
+                }
+                for(i=0; i<$scope.highestAttendance.length; i++){
+                    if($scope.highestAttendance[i] !== undefined){
+                        //console.log($scope.highestAttendance[i].date, talkStart, talkEnd);
+                        if(moment($scope.highestAttendance[i].date).isBetween(talkStart,talkEnd)){  
+                            $scope.busiestTalks[i] = talk;
+                            $scope.busiestTalks[i].people = $scope.highestAttendance[i].value;
+                        }
+                    } 
+                }
+                
+            });
+            
+        }
 
         $scope.randomCounter = 0;
         $scope.randomizeData = function(){
@@ -515,7 +579,6 @@ angular.module('quasarFrontendApp')
     	}
 
         //Carga la data generica de los campos desde la API y la guarda en la variable monitorize
-        $scope.highestVolume = new Array(3);
         $scope.loadGenericData = function(generic){
             quasarApi.getGenericVolumeData(generic.key).then(function(response){
 
@@ -536,7 +599,26 @@ angular.module('quasarFrontendApp')
                                         monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
 
                                         if(monitor_group.datum == 'volume'){
-                                            console.log(date, metric[monitor_group.datum]);
+                                            if($scope.highestVolume[0] == undefined || $scope.highestVolume[0].value < metric[monitor_group.datum]){
+                                                $scope.highestVolume[0] = {
+                                                    'date':date,
+                                                    'value':metric[monitor_group.datum]
+                                                };
+                                            }else{
+                                                if($scope.highestVolume[1] == undefined || $scope.highestVolume[1].value < metric[monitor_group.datum]){
+                                                    $scope.highestVolume[1] = {
+                                                        'date':date,
+                                                        'value':metric[monitor_group.datum]
+                                                    };
+                                                }else{
+                                                    if($scope.highestVolume[2] == undefined || $scope.highestVolume[2].value < metric[monitor_group.datum]){
+                                                        $scope.highestVolume[2] = {
+                                                            'date':date,
+                                                            'value':metric[monitor_group.datum]
+                                                        };
+                                                    }
+                                                }
+                                            }
                                         }   
                                     }
                                 }
@@ -547,8 +629,6 @@ angular.module('quasarFrontendApp')
                     }
 
                 }
-
-
                 $scope.loadState.dataGenerics++;
                 hasFinishedLoading();
                 
@@ -755,6 +835,33 @@ angular.module('quasarFrontendApp')
                 switch(arrTopic[arrTopic.length-1]){
                     case 'volume':
                     case 'datum':
+                        if(arrTopic[arrTopic.length-1] == 'volume'){
+                            var vol = angular.fromJson(message.toString());
+                            vol = parseFloat(vol.volume);
+
+                            var cDate = moment().format('x');
+                            if($scope.highestVolume[0] == undefined || $scope.highestVolume[0].value < vol){
+                                $scope.highestVolume[0] = {
+                                    'date':cDate,
+                                    'value':vol
+                                };
+                            }else{
+                                if($scope.highestVolume[1] == undefined || $scope.highestVolume[1].value < vol){
+                                    $scope.highestVolume[1] = {
+                                        'date':cDate,
+                                        'value':vol
+                                    };
+                                }else{
+                                    if($scope.highestVolume[2] == undefined || $scope.highestVolume[2].value < vol){
+                                        $scope.highestVolume[2] = {
+                                            'date':cDate,
+                                            'value':vol
+                                        };
+                                    }
+                                }
+                            }
+
+                        }
                         pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));
                     break;
                     case 'tweet':
@@ -773,7 +880,17 @@ angular.module('quasarFrontendApp')
                                     $scope.metrics.ocupacion.planta1 = message.toString();
                                 break;
                                 case 'asistentes':
-                                    $scope.metrics.asistentes.actual = message.toString();     
+                                    $scope.metrics.asistentes.actual = parseInt(message.toString()); 
+                                    $scope.checkAssistance();   
+                                break;
+                                case 'entradas':
+                                    $scope.metrics.edificio.entradas = parseInt(message.toString());   
+                                break;
+                                case 'salidas':
+                                    $scope.metrics.edificio.salidas = parseInt(message.toString());    
+                                break;
+                                case 'wifi':
+                                    $scope.wifiData.data[$scope.wifiData.data.length -1].value = parseInt(message.toString());    
                                 break;
                                 case 'bano-mujer-1':
                                 case 'bano-mujer-2':
@@ -810,7 +927,7 @@ angular.module('quasarFrontendApp')
 
                 var lapse = endHour - startHour;
                 var currentHour = currentHour-startHour;
-                return Math.round((currentHour*100)/lapse);
+                return Math.round((currentHour*85)/lapse);
             }else{
                 return 0;
             }

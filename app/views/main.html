@@ -13,7 +13,7 @@
 
 		<div class="row">
 			<div class="col-md-8">
-				
+		
 				<floor-map 
 					src='images/plantas-dashboard.png'
 					occupancy='metrics.detalleOcupacion'>
@@ -131,11 +131,11 @@
 			  		</center>
 			  	</div>
 		  	</div>
-		  	<!-- 
+		 
 		  	<electric-gauge
 		  		data="metrics.costeElectrico"
 		  		height="175">
-		  	</electric-gauge> -->
+		  	</electric-gauge> 
 
 			</div>
 			<div class="col-md-4">
@@ -151,11 +151,11 @@
 			  	</div>
 		  	</div>
 		  	<br/>
-		  	
+	
 		  	<wait-clock
 		  		time="metrics.esperaCafeteria"
 		  		height="145">
-		  	</wait-clock> 
+		  	</wait-clock>
 
 			</div>
 			<div class="col-md-4">
@@ -170,7 +170,7 @@
 				  	</center>
 			  	</div>
 		  	</div>
-		
+
 		  	<dual-graph
 	  			data="wifiData"
 	  			height="145">
@@ -298,10 +298,9 @@
 					
 					<div class="col-md-11" style="padding-left:0px;">
 						
-						<!-- 
 						<sparkline
 							data="category">
-						</sparkline> -->
+						</sparkline> 
 					</div>
 					
 				</div>
@@ -322,34 +321,23 @@
 
 
 
-		  	<div class="row metrics-list">
+		  	<div class="row metrics-list" ng-repeat="loudTalk in loudestTalks">
 		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
+
+		  			<img 
+							ng-if="loudTalk.speaker" 
+							class="img-responsive img-circle" 
+							ng-src="{{loudTalk.speaker.image}}"/>
+
+						<img ng-if="!loudTalk.speaker"
+							ng-src="{{loudTalk.image}}" 
+							class="img-responsive img-circle"/>
+
 		  		</div>
 		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
+		  			{{loudTalk.speaker.name}}
 		  			<br>
-		  			<span class="metric-sm">max:80dB</span>
-		  		</div>
-		  	</div>
-		  	<div class="row metrics-list">
-		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
-		  		</div>
-		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
-		  			<br>
-		  			<span class="metric-sm">máximo:80dB</span>
-		  		</div>
-		  	</div>
-		  	<div class="row metrics-list">
-		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
-		  		</div>
-		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
-		  			<br>
-		  			<span class="metric-sm">máximo:80dB</span>
+		  			<span class="metric-sm">max:{{loudTalk.volume}}dB</span>
 		  		</div>
 		  	</div>
 
@@ -372,34 +360,24 @@
 
 
 
-		  	<div class="row metrics-list">
+		  	<div class="row metrics-list" ng-repeat="busyTalk in busiestTalks">
 		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
+
+
+		  			<img 
+							ng-if="busyTalk.speaker" 
+							class="img-responsive img-circle" 
+							ng-src="{{busyTalk.speaker.image}}"/>
+
+						<img ng-if="!busyTalk.speaker"
+							ng-src="{{busyTalk.image}}" 
+							class="img-responsive img-circle"/>
+
 		  		</div>
 		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
+		  			{{busyTalk.speaker.name}}
 		  			<br>
-		  			<span class="metric-sm">100 asistentes</span>
-		  		</div>
-		  	</div>
-		  	<div class="row metrics-list">
-		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
-		  		</div>
-		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
-		  			<br>
-		  			<span class="metric-sm">100 asistentes</span>
-		  		</div>
-		  	</div>
-		  	<div class="row metrics-list">
-		  		<div class="col-md-3" style="padding-right: 0px">
-		  			<img class="img-responsive img-circle" src="http://www.theapihour.com/wp-content/uploads/2015/08/bbva-jose-manuel-de-la-chica.jpg"/>
-		  		</div>
-		  		<div class="col-md-9" style="padding-left: 4px">
-		  			José Manuel de la Chica
-		  			<br>
-		  			<span class="metric-sm">100 asistentes</span>
+		  			<span class="metric-sm">{{busyTalk.people}} assistants</span>
 		  		</div>
 		  	</div>
 
@@ -430,10 +408,10 @@
 	  		<span class="metrics-title">
 	  			Number of <br>tweets
 	  		</span>
-	  		 <!-- 
+
 	  		<dual-graph
 	  			data="tweetData">
-	  		</dual-graph> -->
+	  		</dual-graph>
 
 	  	</div>
 	  	

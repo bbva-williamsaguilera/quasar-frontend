@@ -121,7 +121,7 @@ angular.module('quasarFrontendApp')
           //Actualiza la gráfica y los textos asociados
           scope.updateActual = function(valorActual) {
             //Si no hay parametros no continúa
-            if (!actualValue || !totalValue) {
+            if (!valorActual) {
                 return;
             }
             //Porcentaje actual de circulos marcados

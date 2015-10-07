@@ -118,6 +118,7 @@ angular.module('quasarFrontendApp')
 
           svg.select('#clock-container')
             .append('text')
+              .attr('id','min-placeholder')
               .text('min')
               .attr('fill', '#FFF')
               .attr('y',-3)
@@ -128,6 +129,7 @@ angular.module('quasarFrontendApp')
 
           svg.select('#clock-container')
             .append('text')
+              .attr('id','seg-placeholder')
               .text('seg')
               .attr('fill', '#FFF')
               .attr('y',17)
@@ -182,6 +184,16 @@ angular.module('quasarFrontendApp')
                 .attr('x', -20)
                 .style('font-size','22px')
                 .style('font-weight', 'bold');
+
+            svg.select('#clock-container')
+              .append('text')
+                .attr('id','closed')
+                .text('')
+                .attr('fill', '#FFF')
+                .attr('y',9)
+                .attr('x', -37)
+                .style('font-size','22px')
+                .style('font-weight', 'bold');
           
 
           //Actualiza la gráfica y los textos asociados
@@ -191,55 +203,64 @@ angular.module('quasarFrontendApp')
                 return;
             }
 
-
-
-            //Atributo de valor actual
-            var actualValue;
-            if(valorActual.indexOf(':') < 0){
-              actualValue = ['0','0'];
-            }else{
-              actualValue = valorActual.split(':');
-            }
-
-            var actualPercentage = (actualValue[0]*100)/totalSecciones;
-            var currentColor = gaugeColor[Math.floor((actualPercentage*gaugeColor.length)/100)];
-
-            var oldValue = parseInt(svg.select('#min').text());
-            var mov = 'down';
-            if(oldValue < actualValue[0]){
-              mov = 'up'
-            };
-
-            svg.select('#min').text(actualValue[0]);
-            svg.select('#sec').text(actualValue[1]);
-
-            if(svg.select('#arrow-container').attr('data-direction') != mov){
-              svg.select('#arrow-container').attr('data-direction',mov);
-              if(mov == 'down'){
-                svg.select('#arrow-container').attr('transform', 'rotate(0 -30 0)');
+            if(valorActual != 'closed'){
+              //Atributo de valor actual
+              var actualValue;
+              if(valorActual.indexOf(':') < 0){
+                actualValue = ['0','0'];
               }else{
-                svg.select('#arrow-container').attr('transform', 'rotate(180 -30 0)');
+                actualValue = valorActual.split(':');
               }
-              
+
+              var actualPercentage = (actualValue[0]*100)/totalSecciones;
+              var currentColor = gaugeColor[Math.floor((actualPercentage*gaugeColor.length)/100)];
+
+              var oldValue = parseInt(svg.select('#min').text());
+              var mov = 'down';
+              if(oldValue < actualValue[0]){
+                mov = 'up'
+              };
+
+              svg.select('#min').text(actualValue[0]);
+              svg.select('#closed').text('');
+              svg.select('#min-placeholder').text('min');
+              svg.select('#sec').text(actualValue[1]);
+              svg.select('#seg-placeholder').text('seg');
+              svg.select('#arrow-container').style('display', 'block');
+              if(svg.select('#arrow-container').attr('data-direction') != mov){
+                svg.select('#arrow-container').attr('data-direction',mov);
+                if(mov == 'down'){
+                  svg.select('#arrow-container').attr('transform', 'rotate(0 -30 0)');
+                }else{
+                  svg.select('#arrow-container').attr('transform', 'rotate(180 -30 0)');
+                }
+                
+              }
+
+              svg.select('#gauge-arc').remove();
+
+              svg.select('#cover-circle').attr('stroke',currentColor);
+
+              svg.select('#clock-container').append('path')
+                .attr('fill', currentColor)
+                .attr('id', 'gauge-arc')
+                .data([actualPercentage])
+                .attr('d', arc);
+            }else{
+              svg.select('#closed').text('Closed');
+              svg.select('#sec').text('');
+              svg.select('#min').text('');
+              svg.select('#min-placeholder').text('');
+              svg.select('#seg-placeholder').text('');
+              svg.select('#arrow-container').style('display', 'none');
+
+              svg.select('#gauge-arc').remove();
+              svg.select('#clock-container').append('path')
+                .attr('fill', currentColor)
+                .attr('id', 'gauge-arc')
+                .data([0])
+                .attr('d', arc);
             }
-
-            svg.select('#gauge-arc').remove();
-
-            svg.select('#cover-circle').attr('stroke',currentColor);
-
-            svg.select('#clock-container').append('path')
-              .attr('fill', currentColor)
-              .attr('id', 'gauge-arc')
-              .data([actualPercentage])
-              .attr('d', arc);
-
-
-
-
-
-
-            
-            
 
           };
         });
