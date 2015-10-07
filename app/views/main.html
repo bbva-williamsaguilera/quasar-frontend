@@ -272,13 +272,13 @@
 										{{currentTalks[currentTalks.length-1].hour}}
 									</div>
 									<div class="col-md-1 col-md-offset-8" style="padding:0px; padding-left: 8px">
-										{{talkEnd}}
+										{{currentTalks[currentTalks.length-1].endHour}}
 									</div>
 								</div>
 								<div class="row"> 
 									<div class="col-md-12 length-bar">
 										<div class="bar-fondo"></div>
-										<div class="bar-fondo duration" style="width:{{ getCurrentTimeWidth(currentTalks[currentTalks.length-1].hour, talkEnd) }}%;"></div>
+										<div class="bar-fondo duration" style="width:{{ getCurrentTimeWidth(currentTalks[currentTalks.length-1].hour, currentTalks[currentTalks.length-1].endHour) }}%;"></div>
 									</div>
 								</div>
 							</div>

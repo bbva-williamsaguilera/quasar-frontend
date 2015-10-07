@@ -121,7 +121,7 @@ angular.module('quasarFrontendApp')
             'esperaCafeteria':'5:23',
             'asistentes': {
                 'total':150,
-                'actual':112
+                'actual':0
             },
             'ocupacion':{
                 'planta1':10,
@@ -259,7 +259,6 @@ angular.module('quasarFrontendApp')
                         });
                     }
                 });
-                console.log($scope.schedule);
                 $scope.loadState.schedule = true;
                 $scope.loadCurrentTalks();
 
@@ -269,7 +268,6 @@ angular.module('quasarFrontendApp')
         }
 
         //Funcion a ejecutarse cada minuto
-        $scope.talkEnd = undefined;
         $scope.tick = function(){
             $scope.hour = moment().add($scope.testHoursToAdd, 'hours').format('HH:mm');
             $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
@@ -427,9 +425,6 @@ angular.module('quasarFrontendApp')
 
                 //SORT currentTalksArray by relativePosition
                 $scope.currentTalks.sort(function(a,b){ return a.relativePosition - b.relativePosition; });
-
-                $scope.talkEnd = $scope.schedule[$scope.currentTalks[$scope.currentTalks.length-1].position + 1].hour;
-                
             }
         }
 
@@ -520,6 +515,7 @@ angular.module('quasarFrontendApp')
     	}
 
         //Carga la data generica de los campos desde la API y la guarda en la variable monitorize
+        $scope.highestVolume = new Array(3);
         $scope.loadGenericData = function(generic){
             quasarApi.getGenericVolumeData(generic.key).then(function(response){
 
@@ -532,12 +528,16 @@ angular.module('quasarFrontendApp')
                                 if(monitor_group.locations[y].data === undefined){
                                     monitor_group.locations[y].data = [];
                                 }
-                                
+
                                 for(var x=0; x<response.data.length; x++){
                                     var metric = response.data[x];
                                     var date = parseInt(moment(metric.date).format('x')); 
                                     if(monitor_group.datum && metric[monitor_group.datum]){
                                         monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
+
+                                        if(monitor_group.datum == 'volume'){
+                                            console.log(date, metric[monitor_group.datum]);
+                                        }   
                                     }
                                 }
 
