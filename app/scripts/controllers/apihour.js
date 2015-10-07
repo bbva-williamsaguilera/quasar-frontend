@@ -39,7 +39,7 @@ angular.module('quasarFrontendApp')
         //Distintas metricas
         $scope.tweetData = [
             {
-                'title': '#APIHour',
+                'title': '#theAPIHourIoT',
                 'data' : [
                     { 
                         'tag':'Yesterday',
@@ -54,7 +54,7 @@ angular.module('quasarFrontendApp')
                 ] 
             },
             {
-                'title': '@Fernandoelsoso',
+                'title': '@theapihour',
                 'data' : [
                     { 
                         'tag':'Yesterday',
@@ -78,7 +78,7 @@ angular.module('quasarFrontendApp')
                 'data' : [
                     { 
                         'tag':'Friday',
-                        'value':423,
+                        'value':223,
                         'color': '#3E3E3D'
                     },
                     { 
@@ -93,17 +93,17 @@ angular.module('quasarFrontendApp')
                     },
                     { 
                         'tag':'Monday',
-                        'value':437,
+                        'value':245,
                         'color': '#3E3E3D'
                     },
                     { 
                         'tag':'Tuesday',
-                        'value':443,
+                        'value':238,
                         'color': '#3E3E3D'
                     },
                     { 
                         'tag':'Wednesday',
-                        'value':439,
+                        'value':205,
                         'color': '#3E3E3D'
                     },
                     { 
@@ -181,8 +181,8 @@ angular.module('quasarFrontendApp')
             ],
             
             'edificio':{
-                'entradas':1890,
-                'salidas':1413
+                'entradas':20,
+                'salidas':5
             }
         }
 
@@ -243,7 +243,7 @@ angular.module('quasarFrontendApp')
                     }
 
                     return aHour[0]-bHour[0];
-                })
+                });
                 angular.forEach($scope.schedule, function(talk){
                     if(talk.speaker){
                         quasarApi.getGenericData('speaker',talk.speaker).then(function(response){
@@ -262,13 +262,13 @@ angular.module('quasarFrontendApp')
         }
 
         //Funcion a ejecutarse cada minuto
-        
+        $scope.talkEnd = undefined;
         $scope.tick = function(){
             $scope.hour = moment().add($scope.testHoursToAdd, 'hours').format('HH:mm');
             $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
-            //$scope.loadCurrentTalks();
-            //$scope.cleanMonitorData();
+            $scope.loadCurrentTalks();
+            $scope.cleanMonitorData();
 
             $scope.randomizeData();
             
@@ -311,6 +311,10 @@ angular.module('quasarFrontendApp')
                 $scope.metrics.detalleOcupacion[3].ocupacion['bano-minus'] = !(Math.random()+.5|0);
 
                 $scope.checkAvailability();
+
+                randomizeEntradasSalidas();
+
+
    
             }
 
@@ -322,6 +326,13 @@ angular.module('quasarFrontendApp')
 
             $scope.randomCounter++;
         };
+
+        function randomizeEntradasSalidas(){
+            var horaActual = $scope.hour.split(':')[0];
+
+
+
+        }
 
         function randomOcupacionInTime(valActual,min,max){
             var horaActual = $scope.hour.split(':')[0];
@@ -369,7 +380,7 @@ angular.module('quasarFrontendApp')
 
                 var currentLapse = moment(currentTime).format('x') - moment($scope.lastMonitorizedMoment).format('x');
 
-                angular.forEach($scope.schedule, function (talk){
+                angular.forEach($scope.schedule, function (talk, key){
                     var talkTime = talk.hour.split(':');
                     
                     var talkHour = moment().hour(talkTime[0]).minute(talkTime[1]);
@@ -383,7 +394,7 @@ angular.module('quasarFrontendApp')
                         var talkPosition = (talkMinus * 95) / currentLapse;
                         
                         talk.relativePosition = Math.round(talkPosition*100)/100;
-
+                        talk.position = key;
 
                         switch(talk.talk){
                             case 'COFFEE BREAK':
@@ -408,8 +419,10 @@ angular.module('quasarFrontendApp')
                 });
 
                 //SORT currentTalksArray by relativePosition
-                $scope.currentTalks.sort(function(a,b){ return a.relativePosition - b.relativePosition; })
+                $scope.currentTalks.sort(function(a,b){ return a.relativePosition - b.relativePosition; });
 
+                $scope.talkEnd = $scope.schedule[$scope.currentTalks[$scope.currentTalks.length-1].position + 1].hour;
+                
             }
         }
 
