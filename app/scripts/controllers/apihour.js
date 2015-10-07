@@ -43,7 +43,7 @@ angular.module('quasarFrontendApp')
                 'data' : [
                     { 
                         'tag':'Yesterday',
-                        'value':5,
+                        'value':27,
                         'color': '#3E3E3D'
                     },
                     { 
@@ -58,7 +58,7 @@ angular.module('quasarFrontendApp')
                 'data' : [
                     { 
                         'tag':'Yesterday',
-                        'value':10,
+                        'value':1,
                         'color': '#3E3E3D'
                     },
                     { 
@@ -356,12 +356,12 @@ angular.module('quasarFrontendApp')
             }
             
             if(valActual <= porcentaje[0]){
-                valActual += Math.random() * (max - min) + min;
+                valActual = parseFloat(valActual) + Math.random() * (max - min) + min;
             }else{
                 if(valActual >= porcentaje[1]){
-                   valActual -= Math.random() * (max - min) + min; 
+                   valActual = parseFloat(valActual) - Math.random() * (max - min) + min; 
                 }else{
-                    valActual += Math.random() * (max - (-max)) + (-max);
+                    valActual = parseFloat(valActual) + Math.random() * (max - (-max)) + (-max);
                 }
             }
 
@@ -472,7 +472,7 @@ angular.module('quasarFrontendApp')
                 $scope.loadState.dataDevices >= $scope.devices.length){
 
                 $scope.monitorizeData = angular.copy($scope.monitorize);
-                //startListening();
+                startListening();
             }
         }
 
@@ -514,7 +514,7 @@ angular.module('quasarFrontendApp')
 
         //Carga la data generica de los campos desde la API y la guarda en la variable monitorize
         $scope.loadGenericData = function(generic){
-            quasarApi.getGenericData(generic.key).then(function(response){
+            quasarApi.getGenericVolumeData(generic.key).then(function(response){
 
                 for(var i=0; i<$scope.monitorize.length; i++){
                     var monitor_group = $scope.monitorize[i];
@@ -744,11 +744,38 @@ angular.module('quasarFrontendApp')
         $scope.manageMqttMessage = function(topic, message){
             var arrTopic = topic.split('/');
             console.log(topic, message.toString());
-            if(arrTopic[arrTopic.length-2] == 'quasar'){
+            if(arrTopic[0] == 'quasar'){
                 switch(arrTopic[arrTopic.length-1]){
                     case 'volume':
                     case 'datum':
                         pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));
+                    break;
+                    default:
+                        if(arrTopic[1] == 'metrics'){
+                            switch(arrTopic[2]){
+                                case 'cafeteria':
+                                    $scope.metrics.esperaCafeteria = message.toString();
+                                break;
+                                case 'ocupacion':
+                                    $scope.metrics.ocupacion.planta1 = message.toString();
+                                break;
+                                case 'asistentes':
+                                    $scope.metrics.asistentes.actual = message.toString();     
+                                break;
+                                case 'bano-mujer-1':
+                                case 'bano-mujer-2':
+                                case 'bano-hombre-1':
+                                case 'bano-hombre-2':
+                                case 'bano-minus':
+                                    var bano = false;
+                                    if(message.toString()=='true'){
+                                        bano = true;
+                                    }
+                                    $scope.metrics.detalleOcupacion[3].ocupacion[arrTopic[2]] = bano;
+                                    $scope.checkAvailability();
+                                break;
+                            }
+                        }
                     break;
 
                 }

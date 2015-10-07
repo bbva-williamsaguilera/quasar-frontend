@@ -39,6 +39,10 @@ angular.module('quasarFrontendApp')
 			return $http.get(host+'generic/'+generic+extra+'?after='+today+'&limit='+limit);
 		}
 
+		function getGenericVolumeData(generic){
+			return $http.get(host+'generic/aggregate/'+generic+'?index=volume&threshold=2&after='+today+'&limit='+limit);
+		}
+
 		function getScheduleData(){
 			return $http.get(host+'generic/schedule?limit=100');
 		}
@@ -47,6 +51,7 @@ angular.module('quasarFrontendApp')
 			getDevices: getDevices,
 			getSensorData: getSensorData,
 			getGenericData: getGenericData,
-			getScheduleData: getScheduleData
+			getScheduleData: getScheduleData,
+			getGenericVolumeData: getGenericVolumeData
 		};
 	}]);
