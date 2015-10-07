@@ -1,0 +1,97 @@
+[
+  {
+    "key":"light",
+    "value": "Luz",
+    "color": "#EDBC3E",
+    "suffix": " lux",
+    "icon":"fa fa-lightbulb-o",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b84c06"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b81703"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["c4be84717f88"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"lux"
+  },
+  {
+    "key":"temperature",
+    "value": "Temperatura",
+    "color": "#AB1D5D",
+    "suffix": "˚C",
+    "icon":"wi wi-thermometer",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b84c06"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b81703"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["c4be84717f88"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"ambient_temperature"
+  },
+  {
+    "key":"humidity",
+    "value": "Humedad",
+    "color": "#009DE4",
+    "suffix": "%",
+    "icon":"wi wi-raindrops",
+    "locations": [
+      {
+        "key":"entrada",
+        "name": "ENTRADA",
+        "devices":["b0b448b84c06"]
+      },
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "devices": ["b0b448b81703"]
+      },
+      {
+        "key":"patio",
+        "name": "PATIO DE COLUMNAS",
+        "devices": ["c4be84717f88"]
+      }
+    ],
+    "mqtt":"quasar/datum",
+    "datum":"humidity"
+  },
+  {
+    "key":"volume",
+    "value": "Volumen",
+    "color": "#FFFFFF",
+    "suffix": "db",
+    "icon":"fa fa-volume-up",
+    "locations": [
+      {
+        "key":"auditorio",
+        "name": "AUDITORIO",
+        "generic":["volume"]
+      }
+    ],
+    "mqtt":"quasar/volume",
+    "datum":"volume"
+  }
+
+]

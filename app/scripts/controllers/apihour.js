@@ -244,7 +244,13 @@ angular.module('quasarFrontendApp')
 
                     return aHour[0]-bHour[0];
                 });
-                angular.forEach($scope.schedule, function(talk){
+                angular.forEach($scope.schedule, function(talk, key){
+                    talk.endHour = talk.hour;
+                    if(key < $scope.schedule.length-1){
+                        if($scope.schedule[key+1]){
+                            talk.endHour = $scope.schedule[key+1].hour;
+                        }
+                    }
                     if(talk.speaker){
                         quasarApi.getGenericData('speaker',talk.speaker).then(function(response){
                             talk.speaker = response.data;
@@ -253,6 +259,7 @@ angular.module('quasarFrontendApp')
                         });
                     }
                 });
+                console.log($scope.schedule);
                 $scope.loadState.schedule = true;
                 $scope.loadCurrentTalks();
 
@@ -750,6 +757,12 @@ angular.module('quasarFrontendApp')
                     case 'datum':
                         pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));
                     break;
+                    case 'tweet':
+                        $scope.tweetData[1].data[1].value = parseInt($scope.tweetData[1].data[1].value)+1;
+                    break;
+                    case 'hashtag':
+                        $scope.tweetData[0].data[1].value = parseInt($scope.tweetData[0].data[1].value)+1;
+                    break;
                     default:
                         if(arrTopic[1] == 'metrics'){
                             switch(arrTopic[2]){
@@ -774,6 +787,7 @@ angular.module('quasarFrontendApp')
                                     $scope.metrics.detalleOcupacion[3].ocupacion[arrTopic[2]] = bano;
                                     $scope.checkAvailability();
                                 break;
+
                             }
                         }
                     break;
