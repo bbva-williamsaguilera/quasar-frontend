@@ -77,8 +77,6 @@ angular.module('quasarFrontendApp')
                 clearTimeout(renderTimeout);
             } 
 
-
-
             //renderiza dentro del tiempo especificado
             renderTimeout = $timeout(function() {
 
@@ -102,7 +100,7 @@ angular.module('quasarFrontendApp')
                   .domain([maxPoint, 0])
                   .range([20, barHeight]);
 
-                
+                svg.selectAll('*').remove();
                 //Por cada location añade un tag, con texto y contenedores
                 var groupWidth = totalWidth/totalGraphs;
                 for(var i=0; i<totalGraphs; i++){

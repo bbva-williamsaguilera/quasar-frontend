@@ -305,10 +305,10 @@ angular.module('quasarFrontendApp')
             $scope.hour = moment().add($scope.testHoursToAdd, 'hours').format('HH:mm');
             $scope.lastMonitorizedMoment = moment().add($scope.testHoursToAdd, 'hours').subtract($scope.hoursToMonitorize, 'hours');
 
-            //$scope.loadCurrentTalks();
-            //$scope.cleanMonitorData();
+            $scope.loadCurrentTalks();
+            $scope.cleanMonitorData();
             $scope.checkLoudestBusiestTalks();
-            //$scope.randomizeData();
+            $scope.randomizeData();
             
         };
         $interval($scope.tick, 60000);
@@ -327,6 +327,7 @@ angular.module('quasarFrontendApp')
                         if(moment($scope.highestVolume[i].date).isBetween(talkStart,talkEnd)){  
                             $scope.loudestTalks[i] = talk;
                             $scope.loudestTalks[i].volume = Math.round($scope.highestVolume[i].value);
+                            break;
                         }
                     } 
                 }
@@ -336,6 +337,7 @@ angular.module('quasarFrontendApp')
                         if(moment($scope.highestAttendance[i].date).isBetween(talkStart,talkEnd)){  
                             $scope.busiestTalks[i] = talk;
                             $scope.busiestTalks[i].people = $scope.highestAttendance[i].value;
+                            break;
                         }
                     } 
                 }
@@ -890,7 +892,13 @@ angular.module('quasarFrontendApp')
                                     $scope.metrics.edificio.salidas = parseInt(message.toString());    
                                 break;
                                 case 'wifi':
-                                    $scope.wifiData.data[$scope.wifiData.data.length -1].value = parseInt(message.toString());    
+                                    $scope.wifiData[0].data[$scope.wifiData[0].data.length -1].value = parseInt(message.toString());    
+                                break;
+                                case 'tweet':
+                                    $scope.tweetData[1].data[1].value = parseInt(message.toString());    
+                                break;
+                                case 'hashtag':
+                                    $scope.tweetData[0].data[1].value = parseInt(message.toString());    
                                 break;
                                 case 'bano-mujer-1':
                                 case 'bano-mujer-2':
