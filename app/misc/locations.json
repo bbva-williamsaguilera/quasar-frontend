@@ -9,17 +9,17 @@
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b84c06"]
+        "devices":["entrada-device"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b81703"]
+        "devices": ["auditorio-device"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["c4be84717f88"]
+        "devices": ["patio-device"]
       }
     ],
     "mqtt":"quasar/datum",
@@ -35,17 +35,17 @@
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b84c06"]
+        "devices":["entrada-device"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b81703"]
+        "devices": ["auditorio-device"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["c4be84717f88"]
+        "devices": ["patio-device"]
       }
     ],
     "mqtt":"quasar/datum",
@@ -61,17 +61,17 @@
       {
         "key":"entrada",
         "name": "ENTRADA",
-        "devices":["b0b448b84c06"]
+        "devices":["entrada-device"]
       },
       {
         "key":"auditorio",
         "name": "AUDITORIO",
-        "devices": ["b0b448b81703"]
+        "devices": ["auditorio-device"]
       },
       {
         "key":"patio",
         "name": "PATIO DE COLUMNAS",
-        "devices": ["c4be84717f88"]
+        "devices": ["patio-device"]
       }
     ],
     "mqtt":"quasar/datum",

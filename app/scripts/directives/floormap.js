@@ -54,7 +54,7 @@ angular.module('quasarFrontendApp')
           
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -100,8 +100,8 @@ angular.module('quasarFrontendApp')
                     'bano-minus':[[559.193, 605.861], [581.863, 618.44], [594.458, 609.006], [571.788, 596.427]],
                     'bano-mujer-1':[[460.957, 436.05], [483.627, 445.484], [493.702, 436.05], [478.589, 429.76099999999997]],
                     'bano-mujer-2':[[498.74, 609.006], [523.929, 612.15], [541.561, 609.006], [516.372, 596.427]],
-                    'coconut2':[[722.921, 555.547], [790.931, 577.559], [833.753, 558.691], [755.667, 533.534]],
-                    'tower2':[[914.357, 483.36400000000003], [974.811, 505.23199999999997], [1037.783, 483.22], [977.329, 458.062]]
+                    'coconut1':[[722.921, 555.547], [790.931, 577.559], [833.753, 558.691], [755.667, 533.534]],
+                    'tower1':[[914.357, 483.36400000000003], [974.811, 505.23199999999997], [1037.783, 483.22], [977.329, 458.062]]
                 } 
             },
             {
@@ -134,7 +134,7 @@ angular.module('quasarFrontendApp')
           for(var ny=0; ny<Object.keys(zona.coord).length; ny++){
             var key = Object.keys(zona.coord)[ny];
 
-            if(zona.coord[key] != false ){
+            if(zona.coord[key] !== undefined ){
               
               var path = 'M'+x(zona.coord[key][0][0])+','+y(zona.coord[key][0][1]);
               path = path + 'L'+x(zona.coord[key][1][0])+','+y(zona.coord[key][1][1]);
@@ -143,7 +143,7 @@ angular.module('quasarFrontendApp')
               path = path + 'L'+x(zona.coord[key][0][0])+','+y(zona.coord[key][0][1]);
               
               var color = colors.free;
-              if(occupancy[i].ocupacion[key] == false){
+              if(occupancy[i].ocupacion[key] === false){
                 color = colors.occupied;
               }
 
@@ -174,7 +174,7 @@ angular.module('quasarFrontendApp')
                 var key = Object.keys(zona.ocupacion)[ny];
 
                 var color = colors.free;
-                if(zona.ocupacion[key] == false){
+                if(zona.ocupacion[key] === false){
                   color = colors.occupied;
                 }
                 svg.select('#path-'+zona.nombre+'-'+key)

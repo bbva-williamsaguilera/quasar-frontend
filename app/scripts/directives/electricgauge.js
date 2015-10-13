@@ -29,19 +29,20 @@ angular.module('quasarFrontendApp')
           var data = scope.data;
           
           scope.actualSection = moment().hour()-horaComienzo;
+          /*var actualValue;
           if(scope.actualSection >=0 && scope.actualSection<data.length){
-            var actualValue = data[scope.actualSection];
-          }
+            actualValue = data[scope.actualSection];
+          }*/
 
           function checkSection(){
 
             var newSection = moment().hour()-horaComienzo;
             //var newSection = scope.actualSection+1;
 
-            if(newSection != scope.actualSection){
+            if(newSection !== scope.actualSection){
               if(newSection >=0 && newSection<data.length){
                 scope.actualSection = newSection;
-                var actualValue = data[scope.actualSection];
+                //actualValue = data[scope.actualSection];
               }
             }
             
@@ -65,7 +66,7 @@ angular.module('quasarFrontendApp')
 
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -77,7 +78,7 @@ angular.module('quasarFrontendApp')
           scope.$watch('data', function(newActual) {
             scope.updateActual(newActual);
           }, true);
-          scope.$watch('actualSection', function(newActual) {
+          scope.$watch('actualSection', function() {
             scope.updateActual(scope.data);
           }, true);
 
@@ -228,7 +229,7 @@ angular.module('quasarFrontendApp')
             if(scope.actualSection >= 0){
               for(var i=0; i<scope.actualSection; i++){
                 var arcColor = greyColor;
-                if(i==(scope.actualSection-1)){
+                if( i === (scope.actualSection-1)){
                   arcColor = color;
                   lastHour = data[i];
                 }
@@ -246,7 +247,7 @@ angular.module('quasarFrontendApp')
                     .append('path')
                       .attr('fill', shadeColor1(arcColor, cnt*-5))
                       .data([{'section':i,'value':cnt}])
-                      .attr('d', arc)
+                      .attr('d', arc);
                 }
 
                 

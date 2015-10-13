@@ -37,17 +37,13 @@ angular.module('quasarFrontendApp')
           var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
           
          
-          var data = scope.data;
-
+          
           //Total de gráficos que irán contenidos en la misma gráfica
           var totalGraphs = scope.data.length;
 
-          //Margen entre los gráficos
-          var graphMargin = 20;
-
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -81,9 +77,10 @@ angular.module('quasarFrontendApp')
             renderTimeout = $timeout(function() {
 
                 var maxPoint = 0;
-                for(var i=0; i<totalGraphs; i++){
-                  for(var cnt=0; cnt<data[i].data.length; cnt++){
-                    var dataGroup = data[i].data[cnt];
+                var cnt, i, dataGroup;
+                for(i=0; i<totalGraphs; i++){
+                  for(cnt=0; cnt<data[i].data.length; cnt++){
+                    dataGroup = data[i].data[cnt];
                     if(dataGroup.value > maxPoint){
                       maxPoint = dataGroup.value;
                     }
@@ -103,7 +100,7 @@ angular.module('quasarFrontendApp')
                 svg.selectAll('*').remove();
                 //Por cada location añade un tag, con texto y contenedores
                 var groupWidth = totalWidth/totalGraphs;
-                for(var i=0; i<totalGraphs; i++){
+                for(i=0; i<totalGraphs; i++){
 
                   svg.append('g')
                     .attr('id', 'groupdata-'+i)
@@ -118,9 +115,9 @@ angular.module('quasarFrontendApp')
 
                   var barWidth = groupWidth / data[i].data.length;
                   
-                  for(var cnt=0; cnt<data[i].data.length; cnt++){
+                  for(cnt=0; cnt<data[i].data.length; cnt++){
 
-                    var dataGroup = data[i].data[cnt];
+                    dataGroup = data[i].data[cnt];
 
                     svg.select('#groupdata-'+i)
                       .append('g')

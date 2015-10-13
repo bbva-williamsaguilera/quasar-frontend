@@ -51,7 +51,7 @@ angular.module('quasarFrontendApp')
 
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -97,7 +97,7 @@ angular.module('quasarFrontendApp')
               return {
                 'max':null,
                 'min':null
-              }
+              };
             }
           }
 
@@ -106,7 +106,7 @@ angular.module('quasarFrontendApp')
           //Alinea los tags de manera correcta en caso de que solo haya uno
           var totalLocations = scope.data.locations.length;
           var yBlankSpacing = 0;
-          if(totalLocations == 1){
+          if(totalLocations === 1){
             yBlankSpacing = 40;
           }
           var ySpace = 30;
@@ -197,17 +197,17 @@ angular.module('quasarFrontendApp')
 
                     minMaxPointLocation[i] = pointY;
 
-                    if (minMaxPointX[1] == undefined || minMaxPointX[1] < pointX.max[0] ) {
+                    if (minMaxPointX[1] === undefined || minMaxPointX[1] < pointX.max[0] ) {
                       minMaxPointX[1] = pointX.max[0];
                     }
-                    if (minMaxPointX[0] == undefined || minMaxPointX[0] > pointX.min[0] ) {
+                    if (minMaxPointX[0] === undefined || minMaxPointX[0] > pointX.min[0] ) {
                       minMaxPointX[0] = pointX.min[0];
                     }
 
-                    if (minMaxPointY[1] == undefined || minMaxPointY[1] < pointY.max[1] ) {
+                    if (minMaxPointY[1] === undefined || minMaxPointY[1] < pointY.max[1] ) {
                       minMaxPointY[1] = pointY.max[1];
                     }
-                    if (minMaxPointY[0] == undefined || minMaxPointY[0] > pointY.min[1] ) {
+                    if (minMaxPointY[0] === undefined || minMaxPointY[0] > pointY.min[1] ) {
                       minMaxPointY[0] = pointY.min[1];
                     }
                   }
@@ -320,7 +320,7 @@ angular.module('quasarFrontendApp')
                       .select('#'+data.locations[locationValues[i][0]].key);
 
                     var newY = 0;
-                    if(cat.attr('data-order') != (i+1)){
+                    if(parseInt(cat.attr('data-order')) !== (i+1)){
 
                       var dif = (i+1) - cat.attr('data-order');
                       var trans = cat.attr('transform');

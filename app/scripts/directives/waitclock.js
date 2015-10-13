@@ -52,7 +52,7 @@ angular.module('quasarFrontendApp')
 
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -104,7 +104,7 @@ angular.module('quasarFrontendApp')
               .attr('fill', '#3E3E3D')
               .attr('r', radius-5)
               .attr('cx', 0)
-              .attr('cy', 0)
+              .attr('cy', 0);
 
           svg.select('#clock-container')
             .append('circle')
@@ -203,7 +203,7 @@ angular.module('quasarFrontendApp')
                 return;
             }
 
-            if(valorActual != 'closed'){
+            if(valorActual !== 'closed'){
               //Atributo de valor actual
               var actualValue;
               if(valorActual.indexOf(':') < 0){
@@ -218,8 +218,8 @@ angular.module('quasarFrontendApp')
               var oldValue = parseInt(svg.select('#min').text());
               var mov = 'down';
               if(oldValue < actualValue[0]){
-                mov = 'up'
-              };
+                mov = 'up';
+              }
 
               svg.select('#min').text(actualValue[0]);
               svg.select('#closed').text('');
@@ -227,9 +227,9 @@ angular.module('quasarFrontendApp')
               svg.select('#sec').text(actualValue[1]);
               svg.select('#seg-placeholder').text('seg');
               svg.select('#arrow-container').style('display', 'block');
-              if(svg.select('#arrow-container').attr('data-direction') != mov){
+              if(svg.select('#arrow-container').attr('data-direction') !== mov){
                 svg.select('#arrow-container').attr('data-direction',mov);
-                if(mov == 'down'){
+                if(mov === 'down'){
                   svg.select('#arrow-container').attr('transform', 'rotate(0 -30 0)');
                 }else{
                   svg.select('#arrow-container').attr('transform', 'rotate(180 -30 0)');
@@ -256,7 +256,7 @@ angular.module('quasarFrontendApp')
 
               svg.select('#gauge-arc').remove();
               svg.select('#clock-container').append('path')
-                .attr('fill', currentColor)
+                .attr('fill', gaugeColor[0])
                 .attr('id', 'gauge-arc')
                 .data([0])
                 .attr('d', arc);

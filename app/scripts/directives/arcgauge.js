@@ -53,7 +53,7 @@ angular.module('quasarFrontendApp')
 
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
           scope.$watch(function() {
             return angular.element($window)[0].innerWidth;
@@ -99,7 +99,7 @@ angular.module('quasarFrontendApp')
             .data(new Array(totalSecciones))
             .enter().append('path')
               .attr('fill', function(d,i){
-                  if(i == seccionMarcada){
+                  if(i === seccionMarcada){
 
                     var rangoColor = Math.floor((actualValue*gaugeColor.length)/100);
 
@@ -130,7 +130,7 @@ angular.module('quasarFrontendApp')
             .attr('y', totalHeight-7)
             .style('font-size','13px')
             .attr('text-anchor', 'middle')
-            .text('%')
+            .text('%');
 
 
 

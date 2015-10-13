@@ -19,7 +19,7 @@ angular.module('quasarFrontendApp')
 		}
 
 		var today = moment().subtract((4+2),'hours').format('YYYY-MM-DD hh:mm:ss');
-		var limit = 500;
+		var limit = 20;
 
 
 		function getDevices(){
@@ -31,7 +31,7 @@ angular.module('quasarFrontendApp')
 		}
 
 		function getGenericData(generic,extra){
-			if(extra != undefined){
+			if(extra !== undefined){
 				extra = '/'+extra;
 			}else{
 				extra = '';
@@ -39,12 +39,17 @@ angular.module('quasarFrontendApp')
 			return $http.get(host+'generic/'+generic+extra+'?after='+today+'&limit='+limit);
 		}
 
+		function getSpeakers(){
+			return $http.get('misc/speakers.json');
+		}
+
 		function getGenericVolumeData(generic){
 			return $http.get(host+'generic/aggregate/'+generic+'?index=volume&threshold=2&after='+today+'&limit='+limit);
 		}
 
 		function getScheduleData(){
-			return $http.get(host+'generic/schedule?limit=100');
+			return $http.get('misc/schedule.json');
+			//return $http.get(host+'generic/schedule?limit=100');
 		}
 
 		return {
@@ -52,6 +57,7 @@ angular.module('quasarFrontendApp')
 			getSensorData: getSensorData,
 			getGenericData: getGenericData,
 			getScheduleData: getScheduleData,
-			getGenericVolumeData: getGenericVolumeData
+			getGenericVolumeData: getGenericVolumeData,
+			getSpeakers: getSpeakers
 		};
 	}]);

@@ -28,7 +28,7 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
             .style('width', '100%');
 
           $window.onresize = function() {
-            scope.$apply();
+            //scope.$apply();
           };
 
           scope.$watch(function() {

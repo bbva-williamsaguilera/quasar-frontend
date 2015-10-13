@@ -14,7 +14,7 @@ angular.module('quasarFrontendApp')
     	$scope.mqttClient = null;
         $scope.monitorize = [];
         $scope.monitorizeData = [];
-        $scope.dataPushTimer = 2000; //Milisegundos a esperar para hacer el push de la data a los gráficos
+        $scope.dataPushTimer = 4000; //Milisegundos a esperar para hacer el push de la data a los gráficos
         $scope.testHoursToAdd = 0;
         $scope.hour = moment().add($scope.testHoursToAdd,'hours').format('HH:mm');
         $scope.cDay = moment().format('D MMM');
@@ -135,12 +135,6 @@ angular.module('quasarFrontendApp')
                 'planta2':8,
                 'planta3':5
             },
-            /*'disponibilidad':{
-                'mujer':[0,7],
-                'hombre':[5,7],
-                'minus':[1,3],
-                'salas':[4,6]
-            },*/
             'detalleOcupacion':[
                 {
                     'nombre':'planta3',
@@ -191,7 +185,7 @@ angular.module('quasarFrontendApp')
                 'entradas':20,
                 'salidas':5
             }
-        }
+        };
 
         //Establece la disponibilidad de acuerdo con la ocupacion
         $scope.checkAvailability = function(){
@@ -202,7 +196,7 @@ angular.module('quasarFrontendApp')
                     var loc = Object.keys(planta.ocupacion)[y];
                     var tipo = '';
 
-                    if(loc.substring(0, loc.indexOf('-'))=='bano'){
+                    if(loc.substring(0, loc.indexOf('-')) === 'bano'){
                         tipo = loc.substring(loc.indexOf('-')+1);
                         if(tipo.indexOf('-')>=0){
                             tipo = tipo.substring(0,tipo.indexOf('-'));
@@ -211,15 +205,16 @@ angular.module('quasarFrontendApp')
                         tipo = 'salas';
                     }
 
-                    if(Object.keys(available).indexOf(tipo) <0){
+                    if(Object.keys(available).indexOf(tipo) < 0){
                         available[tipo] = [0,0];
                     }
+
                     available[tipo][1]++;
-                    if(planta.ocupacion[loc] == true){
+                    
+                    if(planta.ocupacion[loc] === true){
                         available[tipo][0]++;
                     }
 
-                    //console.log(loc.substring(0, loc.indexOf('-')), planta.ocupacion[Object.keys(planta.ocupacion)[y]]);
                 }
             }
             $scope.metrics.disponibilidad = available;
@@ -230,23 +225,26 @@ angular.module('quasarFrontendApp')
         $scope.checkAssistance = function(){
             var newActual = $scope.metrics.asistentes.actual;
             var cDate = parseInt(moment().format('x'));
-            if($scope.highestAttendance[0] == undefined || $scope.highestAttendance[0].value < newActual){
-                $scope.highestAttendance[0] = {
+            if($scope.highestAttendance[0] === undefined || $scope.highestAttendance[0].value < newActual){
+                $scope.highestAttendance.splice(0, 0, {
                     'date':cDate,
                     'value':newActual
-                };
+                });
+                $scope.highestAttendance.splice(3,$scope.highestAttendance.length);
             }else{
-                if($scope.highestAttendance[1] == undefined || $scope.highestAttendance[1].value < newActual){
-                    $scope.highestAttendance[1] = {
+                if($scope.highestAttendance[1] === undefined || $scope.highestAttendance[1].value < newActual){
+                    $scope.highestAttendance.splice(1, 0, {
                         'date':cDate,
                         'value':newActual
-                    };
+                    });
+                    $scope.highestAttendance.splice(3,$scope.highestAttendance.length);
                 }else{
-                    if($scope.highestAttendance[2] == undefined || $scope.highestAttendance[2].value < newActual){
-                        $scope.highestAttendance[2] = {
+                    if($scope.highestAttendance[2] === undefined || $scope.highestAttendance[2].value < newActual){
+                        $scope.highestAttendance.splice(2, 0, {
                             'date':cDate,
                             'value':newActual
-                        };
+                        });
+                        $scope.highestAttendance.splice(3,$scope.highestAttendance.length);
                     }
                 }
             }
@@ -254,7 +252,7 @@ angular.module('quasarFrontendApp')
 
 
         //Si no se han cargado las locaciones las trae desde el archivo externo JSON
-        if($scope.loadState.locations != true){
+        if($scope.loadState.locations !== true){
             $http.get('misc/locations.json').then(function(res){
                 $scope.monitorize = res.data; 
                 $scope.loadState.locations = true; 
@@ -264,14 +262,14 @@ angular.module('quasarFrontendApp')
         }
 
         //Si no se ha cargado el schedule, cargarlo
-        if($scope.loadState.schedule != true){
+        if($scope.loadState.schedule !== true){
             quasarApi.getScheduleData().then(function(response){
                 $scope.schedule = response.data;
                 $scope.schedule.sort(function(a,b){ 
                     var aHour = a.hour.split(':');
                     var bHour = b.hour.split(':');
 
-                    if(aHour[0] == bHour[0]){
+                    if(aHour[0] === bHour[0]){
                         return aHour[1]-bHour[1];
                     }
 
@@ -285,8 +283,15 @@ angular.module('quasarFrontendApp')
                         }
                     }
                     if(talk.speaker){
-                        quasarApi.getGenericData('speaker',talk.speaker).then(function(response){
-                            talk.speaker = response.data;
+                        //quasarApi.getGenericData('speaker',talk.speaker).then(function(response){
+                        quasarApi.getSpeakers().then(function(response){
+                            //talk.speaker = response.data;
+                            for(var i=0; i<response.data.length; i++){
+                                var sp = response.data[i];
+                                if(sp._id === talk.speaker){
+                                    talk.speaker = sp;
+                                }
+                            }
                         }, function(error){
                             console.log('Fallo al cargar ponente del evento '+talk.talk+ ' '+error);
                         });
@@ -311,10 +316,10 @@ angular.module('quasarFrontendApp')
             $scope.randomizeData();
             
         };
-        $interval($scope.tick, 60000);
+        $interval($scope.tick, 3000);
 
         $scope.checkLoudestBusiestTalks = function(){
-            angular.forEach($scope.schedule, function(talk, key){
+            angular.forEach($scope.schedule, function(talk){
                 var talkTime = talk.hour.split(':');
                 var talkFinish = talk.endHour.split(':');
 
@@ -344,7 +349,7 @@ angular.module('quasarFrontendApp')
                 
             });
             
-        }
+        };
 
         $scope.randomCounter = 0;
         $scope.randomizeData = function(){
@@ -354,96 +359,102 @@ angular.module('quasarFrontendApp')
                 $scope.randomCounter = 0;
 
                 //randoms true or false de los baños
-                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['bano-minus'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['tower2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[0].ocupacion['coconut2'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-mujer-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-hombre-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion['bano-minus'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion.tower2 = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[0].ocupacion.coconut2 = (Math.random() >= 0.5);
 
-                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['bano-minus'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['tower1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[1].ocupacion['coconut1'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-mujer-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-hombre-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion['bano-minus'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion.tower1 = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[1].ocupacion.coconut1 = (Math.random() >= 0.5);
 
-                $scope.metrics.detalleOcupacion[2].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[2].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[2].ocupacion['creative-room'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[2].ocupacion['war-room'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[2].ocupacion['bano-mujer'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[2].ocupacion['bano-hombre'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[2].ocupacion['creative-room'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[2].ocupacion['war-room'] = (Math.random() >= 0.5);
 
-                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-1'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-2'] = !(Math.random()+.5|0);
-                $scope.metrics.detalleOcupacion[3].ocupacion['bano-minus'] = !(Math.random()+.5|0);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-mujer-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-1'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-hombre-2'] = (Math.random() >= 0.5);
+                $scope.metrics.detalleOcupacion[3].ocupacion['bano-minus'] = (Math.random() >= 0.5);
 
                 $scope.checkAvailability();
 
-                randomizeEntradasSalidas();
+                //random del numero de asistentes
+                $scope.metrics.asistentes.actual = sumNewRandom($scope.metrics.asistentes.actual, 20, false, 30, $scope.metrics.asistentes.total);
+                $scope.checkAssistance();
 
+                //random de la cafeteria
+                var tiempoCafeActual = $scope.metrics.esperaCafeteria.split(':');
+                tiempoCafeActual[0] = sumNewRandom(tiempoCafeActual[0],3,false,0,59);
+                tiempoCafeActual[1] = sumNewRandom(tiempoCafeActual[1],3,false,0,59);
+                $scope.metrics.esperaCafeteria =  tiempoCafeActual[0]+':'+tiempoCafeActual[1];
 
-   
+                //random del wifi 
+                var wifiConnected = sumNewRandom($scope.wifiData[0].data[$scope.wifiData[0].data.length -1].value, 3, false, 0);
+                $scope.wifiData[0].data[$scope.wifiData[0].data.length -1].value = wifiConnected;
+
+                //random de tweets
+                $scope.tweetData[1].data[1].value = sumNewRandom($scope.tweetData[1].data[1].value,1,true);
+                $scope.tweetData[0].data[1].value = sumNewRandom($scope.tweetData[1].data[1].value,1,true);
+
+            
             }
 
-            //random del numero de ocupacion por planta
-            $scope.metrics.ocupacion.planta1 = randomOcupacionInTime($scope.metrics.ocupacion.planta1,1,5);
-            $scope.metrics.ocupacion.planta2 = randomOcupacionInTime($scope.metrics.ocupacion.planta2,1,5);
-            $scope.metrics.ocupacion.planta3 = randomOcupacionInTime($scope.metrics.ocupacion.planta3,1,5);
+            //random del numero de entradas / salidas
+            $scope.metrics.edificio.entradas = sumNewRandom($scope.metrics.edificio.entradas, 5,true);
+            $scope.metrics.edificio.salidas = sumNewRandom($scope.metrics.edificio.salidas, 4,true);
+            if($scope.metrics.edificio.salidas > $scope.metrics.edificio.entradas){
+                $scope.metrics.edificio.salidas = $scope.metrics.edificio.entradas-7;
+            }
 
+            
+            
+            //random del numero de ocupacion por planta
+            $scope.metrics.ocupacion.planta1 = sumNewRandom($scope.metrics.ocupacion.planta1,3,false,0,99);
+            $scope.metrics.ocupacion.planta2 = sumNewRandom($scope.metrics.ocupacion.planta2,3,false,0,99);
+            $scope.metrics.ocupacion.planta3 = sumNewRandom($scope.metrics.ocupacion.planta3,3,false,0,99);
 
             $scope.randomCounter++;
         };
 
-        function randomizeEntradasSalidas(){
-            var horaActual = $scope.hour.split(':')[0];
+        function sumNewRandom(currentOccupation, variacion, onlyUp, minVal, maxVal){
+            onlyUp = typeof onlyUp !== 'undefined' ? onlyUp : false;
+            minVal = typeof minVal !== 'undefined' ? minVal : false;
+            maxVal = typeof maxVal !== 'undefined' ? maxVal : false;
 
-
-
-        }
-
-        function randomOcupacionInTime(valActual,min,max){
-            var horaActual = $scope.hour.split(':')[0];
-
-            var dataVal = [
-                //Formato [horaDeInicio, horaDeFin, minPorcentaje, maxPorcentaje]
-                [9,12,81,92],
-                [13,14,28,32],
-                [15,17,67,83],
-                [18,18,25,43],
-                [19,21,11,18]
-            ];
-            var porcentaje = [];
-            for(var i=0; i<dataVal.length; i++){
-                
-                if(horaActual >= dataVal[i][0] && horaActual <= dataVal[i][1]){
-                    porcentaje[0] = dataVal[i][2];
-                    porcentaje[1] = dataVal[i][3];
-                    break;
-                }
+            var max = variacion;
+            var min = variacion*-1;
+            if(onlyUp === true){
+                min = 0;
             }
+            var newOccupation = Math.round((parseInt(currentOccupation)) + (Math.random() * (max - min) + min));
             
-            if(valActual <= porcentaje[0]){
-                valActual = parseFloat(valActual) + Math.random() * (max - min) + min;
-            }else{
-                if(valActual >= porcentaje[1]){
-                   valActual = parseFloat(valActual) - Math.random() * (max - min) + min; 
-                }else{
-                    valActual = parseFloat(valActual) + Math.random() * (max - (-max)) + (-max);
+            if(minVal !== false){
+                if(newOccupation < minVal){
+                    newOccupation = minVal;
                 }
             }
+            if(maxVal !== false){
+                if(newOccupation > maxVal){
+                    newOccupation = maxVal;
+                }  
+            }
 
-            return Math.round(valActual);
-
-
+            return newOccupation; 
         }
 
         //Carga las ponencias que se están llevando a cabo dentro de la ventana de monitorización
         $scope.loadCurrentTalks = function(){
-            if($scope.loadState.schedule == true){
+            if($scope.loadState.schedule === true){
 
                 $scope.currentTalks = [];
                 var currentTime = $scope.hour.split(':');
@@ -492,7 +503,7 @@ angular.module('quasarFrontendApp')
                 //SORT currentTalksArray by relativePosition
                 $scope.currentTalks.sort(function(a,b){ return a.relativePosition - b.relativePosition; });
             }
-        }
+        };
 
         //Descarta los datos que sean mas viejos que el periodo a monitorizar
         $scope.cleanMonitorData = function(){
@@ -515,7 +526,7 @@ angular.module('quasarFrontendApp')
                     }
                 }
             }
-        }
+        };
 
         //Establece los campos genéricos que se van a utilizar
         $scope.genericLoad = [
@@ -526,7 +537,7 @@ angular.module('quasarFrontendApp')
 
         //Comienza la carga de devices y generics
         function startLoad(){
-            if($scope.loadState.locations != false){
+            if($scope.loadState.locations !== false){
                 loadDevices();
                 loadGenericInitial();
             }
@@ -540,13 +551,13 @@ angular.module('quasarFrontendApp')
                 $scope.loadState.dataDevices >= $scope.devices.length){
 
                 $scope.monitorizeData = angular.copy($scope.monitorize);
-                startListening();
+                //startListening();
             }
         }
 
         //Carga la data inicial de los campos genericos
         function loadGenericInitial(){
-            if($scope.loadState.initialGenerics != true){
+            if($scope.loadState.initialGenerics !== true){
                 for(var i=0; i<$scope.genericLoad.length; i++){
                     $scope.loadGenericData($scope.genericLoad[i]);
                 }
@@ -555,25 +566,38 @@ angular.module('quasarFrontendApp')
 
         //Carga los devices desde la API
     	function loadDevices(){
-    		if($scope.loadState.devices != true){
-	    		quasarApi.getDevices().then(function(response){
-	    			$scope.devices = response.data;
-	    			if(response.data.length > 0){
-	    				$scope.loadState.devices = true;
-	    				loadInitialData();
-	    			}else{
-	    				$scope.loadState.devices = false;
-	    			}
+    		if($scope.loadState.devices !== true){
+	    		//quasarApi.getDevices().then(function(response){
+    			$scope.devices = [
+                    {
+                        'device':'entrada-device'
+                    },
+                    {
+                        'device':'auditorio-device'
+                    },
+                    {
+                        'device':'patio-device'
+                    },
+
+                ];
+                $scope.loadState.devices = true;
+                loadInitialData();
+    			/*if(response.data.length > 0){
+    				$scope.loadState.devices = true;
+    				loadInitialData();
+    			}else{
+    				$scope.loadState.devices = false;
+    			}
 	    		}, function(error){
 	    			console.log('Fallo al cargar los sensortags '+error);
 	    			$scope.loadState.devices = false;
-	    		}); 
+	    		});*/ 
 	    	}
     	}
 
         //Carga la data inicial de todos los devices
     	function loadInitialData(){
-    		if($scope.loadState.initialData != true){
+    		if($scope.loadState.initialData !== true){
                 for(var i=0; i<$scope.devices.length; i++){
     				$scope.loadDeviceData($scope.devices[i]);
     			}
@@ -582,105 +606,154 @@ angular.module('quasarFrontendApp')
 
         //Carga la data generica de los campos desde la API y la guarda en la variable monitorize
         $scope.loadGenericData = function(generic){
-            quasarApi.getGenericVolumeData(generic.key).then(function(response){
+            //quasarApi.getGenericVolumeData(generic.key).then(function(response){
 
-                for(var i=0; i<$scope.monitorize.length; i++){
-                    var monitor_group = $scope.monitorize[i];
+            var genericData = [];
+            var pointsPerHour = 10;
+            var now = moment().format('x');
+            var back = moment().subtract($scope.hoursToMonitorize, 'hours').format('x');
+            var steps = (now-back) / ($scope.hoursToMonitorize * pointsPerHour);
 
-                    for(var y=0; y<monitor_group.locations.length; y++){
-                        if(monitor_group.locations[y].generic){
-                            if(monitor_group.locations[y].generic.indexOf(generic.key) >= 0){
-                                if(monitor_group.locations[y].data === undefined){
-                                    monitor_group.locations[y].data = [];
-                                }
+            for(var i=0; i <$scope.hoursToMonitorize * pointsPerHour; i++){
+                var dateFromSteps = parseInt(back)+parseInt(steps*i);
+                var devDate = moment(parseInt(dateFromSteps), 'x').format('YYYY-MM-DDTHH:mm:ss.SSS');
 
-                                for(var x=0; x<response.data.length; x++){
-                                    var metric = response.data[x];
-                                    var date = parseInt(moment(metric.date).format('x')); 
-                                    if(monitor_group.datum && metric[monitor_group.datum]){
-                                        monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
+                var volume = Math.round((Math.random() * (80 - 30) + 30) * 10)/10;
 
-                                        if(monitor_group.datum == 'volume'){
-                                            if($scope.highestVolume[0] == undefined || $scope.highestVolume[0].value < metric[monitor_group.datum]){
-                                                $scope.highestVolume[0] = {
+                var genericObject = {
+                    'volume': volume,
+                    'date': devDate
+                };
+
+                genericData.push(genericObject);
+            }
+
+            for(i=0; i<$scope.monitorize.length; i++){
+                var monitor_group = $scope.monitorize[i];
+
+                for(var y=0; y<monitor_group.locations.length; y++){
+                    if(monitor_group.locations[y].generic){
+                        if(monitor_group.locations[y].generic.indexOf(generic.key) >= 0){
+                            if(monitor_group.locations[y].data === undefined){
+                                monitor_group.locations[y].data = [];
+                            }
+
+                            for(var x=0; x<genericData.length; x++){
+                                var metric = genericData[x];
+                                var date = parseInt(moment(metric.date).format('x')); 
+                                if(monitor_group.datum && metric[monitor_group.datum]){
+                                    monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
+
+                                    if(monitor_group.datum === 'volume'){
+                                        if($scope.highestVolume[0] === undefined || $scope.highestVolume[0].value < metric[monitor_group.datum]){
+                                            
+                                            $scope.highestVolume.splice(0, 0, {
+                                                'date':date,
+                                                'value':metric[monitor_group.datum]
+                                            });
+                                            $scope.highestVolume.splice(3,$scope.highestVolume.length);
+                                        }else{
+                                            if($scope.highestVolume[1] === undefined || $scope.highestVolume[1].value < metric[monitor_group.datum]){
+                                                $scope.highestVolume.splice(1, 0, {
                                                     'date':date,
                                                     'value':metric[monitor_group.datum]
-                                                };
+                                                });
+                                            $scope.highestVolume.splice(3,$scope.highestVolume.length);
                                             }else{
-                                                if($scope.highestVolume[1] == undefined || $scope.highestVolume[1].value < metric[monitor_group.datum]){
-                                                    $scope.highestVolume[1] = {
+                                                if($scope.highestVolume[2] === undefined || $scope.highestVolume[2].value < metric[monitor_group.datum]){
+                                                    $scope.highestVolume.splice(2, 0, {
                                                         'date':date,
                                                         'value':metric[monitor_group.datum]
-                                                    };
-                                                }else{
-                                                    if($scope.highestVolume[2] == undefined || $scope.highestVolume[2].value < metric[monitor_group.datum]){
-                                                        $scope.highestVolume[2] = {
-                                                            'date':date,
-                                                            'value':metric[monitor_group.datum]
-                                                        };
-                                                    }
+                                                    });
+                                                    $scope.highestVolume.splice(3,$scope.highestVolume.length);
                                                 }
                                             }
-                                        }   
-                                    }
+                                        }
+                                    }   
                                 }
-
-                                monitor_group.locations[y].data.sort(function(a,b){ return a[0]-b[0]; });
                             }
+
+                            monitor_group.locations[y].data.sort(function(a,b){ return a[0]-b[0]; });
                         }
                     }
-
                 }
-                $scope.loadState.dataGenerics++;
-                hasFinishedLoading();
+
+            }
+            $scope.loadState.dataGenerics++;
+            hasFinishedLoading();
                 
-            }, function(error){
+            /*}, function(error){
                 console.log('Fallo al cargar los historicos de '+generic.key+' '+error);
-            });
+            });*/
             
         };
 
         //Carga la data de los devices desde la API y la guarda en la variable monitorize
     	$scope.loadDeviceData = function(device){
-    		quasarApi.getSensorData(device.device).then(function(response){
+    		//quasarApi.getSensorData(device.device).then(function(response){
 
-    			for(var i=0; i<$scope.monitorize.length; i++){
-    				var monitor_group = $scope.monitorize[i];
+            var deviceData = [];
+            var pointsPerHour = 5;
+            var now = moment().format('x');
+            var back = moment().subtract($scope.hoursToMonitorize, 'hours').format('x');
+            var steps = (now-back) / ($scope.hoursToMonitorize * pointsPerHour);
 
-    				for(var y=0; y<monitor_group.locations.length; y++){
-    					if(monitor_group.locations[y].devices){
-	    					if(monitor_group.locations[y].devices.indexOf(device.device) >= 0){
-	    						if(monitor_group.locations[y].data === undefined){
-	    							monitor_group.locations[y].data = [];
-	    						}
+            for(var i=0; i <$scope.hoursToMonitorize * pointsPerHour; i++){
+                var dateFromSteps = parseInt(back)+parseInt(steps*i);
+                var devDate = moment(parseInt(dateFromSteps), 'x').format('YYYY-MM-DDTHH:mm:ss.SSS');
 
-	    						for(var x=0; x<response.data.length; x++){
-	    							var metric = response.data[x];
-	    							var date = parseInt(moment(metric.date).format('x'));  
-	    							if(monitor_group.datum && metric[monitor_group.datum]){
-			    						monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
-			    					}
+                var temperature = Math.round((Math.random() * (32 - 20) + 20) * 10)/10;
+                var humidity = Math.round((Math.random() * (48 - 42) + 42) * 10)/10;
+                var lux = Math.round((Math.random() * (130 - 40) + 40) * 10)/10;
+
+                var deviceObject = {
+                    'ambient_temperature': temperature,
+                    'humidity': humidity,
+                    'lux': lux,
+                    'device': device.device,
+                    'date': devDate
+                };
+
+                deviceData.push(deviceObject);
+            }
+
+			for(i=0; i<$scope.monitorize.length; i++){
+				var monitor_group = $scope.monitorize[i];
+
+				for(var y=0; y<monitor_group.locations.length; y++){
+					if(monitor_group.locations[y].devices){
+    					if(monitor_group.locations[y].devices.indexOf(device.device) >= 0){
+    						if(monitor_group.locations[y].data === undefined){
+    							monitor_group.locations[y].data = [];
+    						}
+
+    						for(var x=0; x<deviceData.length; x++){
+    							var metric = deviceData[x];
+    							var date = parseInt(moment(metric.date).format('x'));  
+    							if(monitor_group.datum && metric[monitor_group.datum]){
+		    						monitor_group.locations[y].data.push([date, metric[monitor_group.datum]]);
 		    					}
-
-		    					monitor_group.locations[y].data.sort(function(a,b){ return a[0]-b[0]; });
 	    					}
-	    				}
+
+	    					monitor_group.locations[y].data.sort(function(a,b){ return a[0]-b[0]; });
+    					}
     				}
+				}
 
-    			}
+			}
 
-                $scope.loadState.dataDevices++;
-                hasFinishedLoading();
+            $scope.loadState.dataDevices++;
+            hasFinishedLoading();
     			
     			
-    		}, function(error){
+    		/*}, function(error){
     			console.log('Fallo al cargar los historicos de '+device.device+' '+error);
-    		});
+    		});*/
     	};
     	
         //Comienza la escucha del servidor MQTT
         //TODO separarlo a un nuevo modulo
-    	function startListening(){
+    	/*function startListening(){
 
     		if($scope.loadState.mqttConnection !== true){
     			$scope.loadState.mqttConnection = true;
@@ -719,125 +792,128 @@ angular.module('quasarFrontendApp')
 					$scope.manageMqttMessage(topic, message);
 				});
 			}
-    	}
+    	}*/
 
-        //Variable donde se almacenan los datos intermedios recibidos por MQTT
-        $scope.dataPool = [];
-
+        
         //Funcion a ser ejecutada cada X milisegundos que calcula la media de los datos recibidos
         // ... y la inserta en la variable global de datos
+        $scope.dataPushing = 0;
+
         $scope.pushDataPool = function(){
-            var dataPoolCopy = angular.copy($scope.dataPool);
-            $scope.dataPool = [];
+            var i;
+            var dataPoolCopy = [];
+            var cDate = moment().format('YYYY-MM-DDTHH:mm:ss.SSS');
+
+            //Random volume value
+            var volume = Math.round((Math.random() * (80 - 30) + 30) * 10)/10;
+            var dataPoolObject = {
+                'mqtt_topic':'quasar/volume',
+                'topic_var': 'volume',
+                'mqtt_object': {
+                    'volume': volume,
+                    'date': cDate
+                }
+            };
+            dataPoolCopy.push(dataPoolObject);
+
+            if($scope.highestVolume[0] === undefined || $scope.highestVolume[0].value < volume){
+                                            
+                $scope.highestVolume.splice(0, 0, {
+                    'date':parseInt(moment().format('x')),
+                    'value':volume
+                });
+                $scope.highestVolume.splice(3,$scope.highestVolume.length);
+            }else{
+                if($scope.highestVolume[1] === undefined || $scope.highestVolume[1].value < volume){
+                    $scope.highestVolume.splice(1, 0, {
+                        'date':parseInt(moment().format('x')),
+                        'value':volume
+                    });
+                $scope.highestVolume.splice(3,$scope.highestVolume.length);
+                }else{
+                    if($scope.highestVolume[2] === undefined || $scope.highestVolume[2].value < volume){
+                        $scope.highestVolume.splice(2, 0, {
+                            'date':parseInt(moment().format('x')),
+                            'value':volume
+                        });
+                        $scope.highestVolume.splice(3,$scope.highestVolume.length);
+                    }
+                }
+            }
             
-            for(var i=0; i<dataPoolCopy.length; i++){
-                var topicObject = dataPoolCopy[i].mqtt_object;
-
-                if(topicObject.length > 0){
+            if($scope.dataPushing >= 5){
+                for(i=0; i<$scope.devices.length; i++){
                     
-                    var avg_object = {};
+                    var temperature = Math.round((Math.random() * (32 - 20) + 20) * 10)/10;
+                    var humidity = Math.round((Math.random() * (48 - 42) + 42) * 10)/10;
+                    var lux = Math.round((Math.random() * (130 - 40) + 40) * 10)/10;
 
-                    for(var y=0; y<topicObject.length; y++){
+                    dataPoolObject = {
+                        'mqtt_topic':'quasar/datum',
+                        'topic_var': 'datum',
+                        'mqtt_object': {
+                            'ambient_temperature': temperature,
+                            'humidity': humidity,
+                            'lux': lux,
+                            'device': $scope.devices[i].device,
+                            'date': cDate
+                        }
+                    };
+                    dataPoolCopy.push(dataPoolObject);
+                }
+                $scope.dataPushing = 0;
+            }
 
-                        for(var k in topicObject[y]){
-                            if(!isNaN(topicObject[y][k])){
-                                if(!avg_object[k]){
-                                    avg_object[k] = 0;
+            for(i=0; i<dataPoolCopy.length; i++){   
+                for(var y=0; y<$scope.monitorizeData.length; y++){
+                    
+                    var monitor_group = $scope.monitorizeData[y];
+                    
+                    if(monitor_group.mqtt === dataPoolCopy[i].mqtt_topic){
+
+                        if(dataPoolCopy[i].mqtt_object[monitor_group.datum]){
+                            for(var x=0; x<monitor_group.locations.length; x++){
+                                var pushdata = false;
+                                if(monitor_group.locations[x].generic){
+                                    if(monitor_group.locations[x].generic.indexOf(dataPoolCopy[i].topic_var) >= 0){
+                                        pushdata = true;
+                                    }
                                 }
-                                avg_object[k] += parseFloat(topicObject[y][k]);
-                            }else{
-                                avg_object[k] = topicObject[y][k];
-                            }
-                        } 
-                        
-                    }
-                    for(var key in avg_object){
-                        if(!isNaN(avg_object[key])){
-                            avg_object[key] = avg_object[key]/topicObject.length;
-                            avg_object[key] = Math.round(avg_object[key]*100)/100;
-                        }
-                    }
-
-                    //Inserta este objeto promedio en la estructura de datos
-                    dataPoolCopy[i].mqtt_object = avg_object;
-                    
-                    for(y=0; y<$scope.monitorizeData.length; y++){
-                        var monitor_group = $scope.monitorizeData[y];
-                        if(dataPoolCopy[i].mqtt_topic.lastIndexOf('#') >= 0){
-                            dataPoolCopy[i].mqtt_topic = dataPoolCopy[i].mqtt_topic.substring(0,dataPoolCopy[i].mqtt_topic.lastIndexOf('#'));
-                        }
-                        if(monitor_group.mqtt == dataPoolCopy[i].mqtt_topic){
-
-                            if(dataPoolCopy[i].mqtt_object[monitor_group.datum]){
-                                for(var x=0; x<monitor_group.locations.length; x++){
-                                    var pushdata = false;
-                                    if(monitor_group.locations[x].generic){
-                                        if(monitor_group.locations[x].generic.indexOf(dataPoolCopy[i].topic_var) >= 0){
-                                            pushdata = true;
-                                        }
+                                if(monitor_group.locations[x].devices && dataPoolCopy[i].mqtt_object.device){
+                                    if(monitor_group.locations[x].devices.indexOf(dataPoolCopy[i].mqtt_object.device) >= 0){
+                                        pushdata = true;
                                     }
-                                    if(monitor_group.locations[x].devices && dataPoolCopy[i].mqtt_object.device){
-                                        if(monitor_group.locations[x].devices.indexOf(dataPoolCopy[i].mqtt_object.device) >= 0){
-                                            pushdata = true;
-                                        }
-                                    }
+                                }
 
-                                    if(monitor_group.locations[x].data === undefined){
-                                        monitor_group.locations[x].data = [];
-                                    }
-                                    var nDate = moment().format('x');
+                                if(monitor_group.locations[x].data === undefined){
+                                    monitor_group.locations[x].data = [];
+                                }
+                                var nDate = moment().format('x');
 
-                                    if(pushdata == true){
-                                        monitor_group.locations[x].data.push([nDate, dataPoolCopy[i].mqtt_object[monitor_group.datum]]);
-                                    }
+                                if(pushdata === true){
+                                    monitor_group.locations[x].data.push([nDate, dataPoolCopy[i].mqtt_object[monitor_group.datum]]);
                                 }
                             }
                         }
                     }
                 }
             }
-            //console.log(dataPoolCopy);
-            dataPoolCopy = [];
+            $scope.dataPushing++;
+               
         };
         //Intervalo para ejecutar la funcion pushDataPool cada dataPushTimer segundos
         $interval($scope.pushDataPool, $scope.dataPushTimer);
 
-        //Guarda el resObject en la variable intermedia dataPool
-        function pushDataValue(mqtt_topic, topic_var, resObject){
-            var datumExists = false;
-
-            if(Object.keys(resObject).indexOf('device') >= 0){
-                mqtt_topic = mqtt_topic+'#'+resObject.device;
-            }
-
-            for(var i=0; i<$scope.dataPool.length; i++){
-                if($scope.dataPool[i].mqtt_topic == mqtt_topic){
-                    datumExists = true;
-                    $scope.dataPool[i].mqtt_object.push(resObject);
-                }
-            }
-
-            if(!datumExists){
-                var datum = {
-                    'mqtt_topic':mqtt_topic,
-                    'topic_var': topic_var,
-                    'mqtt_object':[
-                        resObject
-                    ]
-                };
-                $scope.dataPool.push(datum);
-            }
-        }
         
         //Maneja la recepción de los mensajes a través de MQTT
         $scope.manageMqttMessage = function(topic, message){
             var arrTopic = topic.split('/');
             console.log(topic, message.toString());
-            if(arrTopic[0] == 'quasar'){
+            if(arrTopic[0] === 'quasar'){
                 switch(arrTopic[arrTopic.length-1]){
                     case 'volume':
                     case 'datum':
-                        if(arrTopic[arrTopic.length-1] == 'volume'){
+                        /*if(arrTopic[arrTopic.length-1] == 'volume'){
                             var vol = angular.fromJson(message.toString());
                             vol = parseFloat(vol.volume);
 
@@ -864,7 +940,7 @@ angular.module('quasarFrontendApp')
                             }
 
                         }
-                        pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));
+                        pushDataValue(topic, arrTopic[arrTopic.length-1], angular.fromJson(message.toString()));*/
                     break;
                     case 'tweet':
                         $scope.tweetData[1].data[1].value = parseInt($scope.tweetData[1].data[1].value)+1;
@@ -873,7 +949,7 @@ angular.module('quasarFrontendApp')
                         $scope.tweetData[0].data[1].value = parseInt($scope.tweetData[0].data[1].value)+1;
                     break;
                     default:
-                        if(arrTopic[1] == 'metrics'){
+                        if(arrTopic[1] === 'metrics'){
                             switch(arrTopic[2]){
                                 case 'cafeteria':
                                     $scope.metrics.esperaCafeteria = message.toString();
@@ -906,7 +982,7 @@ angular.module('quasarFrontendApp')
                                 case 'bano-hombre-2':
                                 case 'bano-minus':
                                     var bano = false;
-                                    if(message.toString()=='true'){
+                                    if(message.toString()==='true'){
                                         bano = true;
                                     }
                                     $scope.metrics.detalleOcupacion[3].ocupacion[arrTopic[2]] = bano;
@@ -924,7 +1000,7 @@ angular.module('quasarFrontendApp')
 
         //devuelve el width de un elemento entre 2 horas con la hora actual
         $scope.getCurrentTimeWidth = function(startHour, endHour){
-            if(startHour != undefined && endHour != undefined){
+            if(startHour !== undefined && endHour !== undefined){
                 var currentHour = $scope.hour.split(':');
                 startHour = startHour.split(':');
                 endHour = endHour.split(':');
@@ -934,7 +1010,7 @@ angular.module('quasarFrontendApp')
                 endHour = moment().hour(endHour[0]).minute(endHour[1]).format('x');
 
                 var lapse = endHour - startHour;
-                var currentHour = currentHour-startHour;
+                currentHour = currentHour-startHour;
                 return Math.round((currentHour*85)/lapse);
             }else{
                 return 0;
