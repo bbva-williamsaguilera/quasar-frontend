@@ -35,8 +35,9 @@ angular.module('quasarFrontendApp')
 
           //Ancho y alto total de la gráfica
           var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
-          
-         
+          if(totalWidth === undefined || totalWidth <=0){
+            totalWidth = svg[0][0].offsetWidth;
+          }
           
           //Total de gráficos que irán contenidos en la misma gráfica
           var totalGraphs = scope.data.length;

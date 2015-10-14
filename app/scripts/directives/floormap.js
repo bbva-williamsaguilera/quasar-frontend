@@ -34,23 +34,32 @@ angular.module('quasarFrontendApp')
             'occupied':'#AB1D5D'
           };
 
-          //Ancho y alto total de la gráfica
-          var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
-          var totalHeight = d3.select(ele[0])[0][0].offsetHeight;
+
           
           //Elemento SVG ajustado al 100% del contenedor
           var svg = d3.select(ele[0])
             .append('svg')
-            .style('width', totalWidth);
+            .style('width', undefined);
 
           
           
 
           //Establece el alto de grafica
-          svg.attr('height', totalHeight)
+          svg.attr('height', undefined)
             .style('position', 'absolute')
             .style('top', '0px')
             .style('left', '0px');
+
+          //Ancho y alto total de la gráfica
+          var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
+          if(totalWidth === undefined || totalWidth <=0){
+            totalWidth = svg[0][0].offsetWidth-30;
+          }
+          var totalHeight = d3.select(ele[0])[0][0].offsetHeight;
+          if(totalHeight === undefined || totalHeight <=0){
+            totalHeight = svg[0][0].offsetHeight;
+          }
+          console.log(totalWidth, totalHeight);
           
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {

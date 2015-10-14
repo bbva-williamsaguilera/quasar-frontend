@@ -52,8 +52,12 @@ angular.module('quasarFrontendApp').directive('barChart', ['$window', '$timeout'
             } 
 
             renderTimeout = $timeout(function() {
-              var width = d3.select(ele[0])[0][0].offsetWidth - margin,
-                  height = scope.data.length * (barHeight + barPadding),
+              var width = d3.select(ele[0])[0][0].offsetWidth;
+              if(width === undefined || width <=0){
+                width = svg[0][0].offsetWidth;
+              }
+              width = width - margin;
+              var height = scope.data.length * (barHeight + barPadding),
                   color = d3.scale.category20(),
                   xScale = d3.scale.linear()
                     .domain([0, d3.max(data, function(d) {

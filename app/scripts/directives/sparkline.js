@@ -33,15 +33,22 @@ angular.module('quasarFrontendApp')
           var sideBarProportion = 0.20;
 
           //Ancho y alto del área de las lineas de la gráfica
-          var width = d3.select(ele[0])[0][0].offsetWidth - (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion) - 40,
-                height = 45;
+          var width = d3.select(ele[0])[0][0].offsetWidth;
+          if(width === undefined || width <=0){
+            width = svg[0][0].offsetWidth;
+          }
+          width = width - (width * sideBarProportion) - 40;
+          var height = 45;
 
           //Ancho y alto total de la gráfica
           var totalWidth = d3.select(ele[0])[0][0].offsetWidth;
+          if(totalWidth === undefined || totalWidth <=0){
+            totalWidth = svg[0][0].offsetWidth;
+          }
           var totalHeight = 88;
 
           //Ancho del tag donde se muestra el nombre de las locaciones
-          var tagWidth = (d3.select(ele[0])[0][0].offsetWidth * sideBarProportion) * 0.70;
+          var tagWidth = (totalWidth * sideBarProportion) * 0.70;
 
           //Margen de las lineas de la gráfica
           var chartMargin = [15,18];
