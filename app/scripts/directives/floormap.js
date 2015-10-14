@@ -59,7 +59,7 @@ angular.module('quasarFrontendApp')
           if(totalHeight === undefined || totalHeight <=0){
             totalHeight = svg[0][0].offsetHeight;
           }
-          console.log(totalWidth, totalHeight);
+          //console.log(totalWidth, totalHeight);
           
           //Responsive, vuelve a renderizar en caso de un redimensionamiento de pantalla ACTUALMENTE NO ES RESPONSIVE
           $window.onresize = function() {
