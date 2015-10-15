@@ -39,13 +39,11 @@ angular.module('quasarFrontendApp')
           //Elemento SVG ajustado al 100% del contenedor
           var svg = d3.select(ele[0])
             .append('svg')
-            .style('width', undefined);
-
-          
+            .style('width', '100%');
           
 
           //Establece el alto de grafica
-          svg.attr('height', undefined)
+          svg.attr('height', '100%')
             .style('position', 'absolute')
             .style('top', '0px')
             .style('left', '0px');
