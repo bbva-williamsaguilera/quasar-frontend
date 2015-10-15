@@ -1,105 +1,186 @@
 
 
-    [
-        {
-            "_id": "561242b2658d9efa1040356e",
-            "name": "Carlos Kuchkovsky",
-            "company": "BBVA",
-            "position": "Global Head of BBVA Open Platform",
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/bbva-carlos-kuchkovsky.jpg",
-            "linkedin": "https://es.linkedin.com/in/carloskuchkovsky",
-            "__v": 0,
-            "date": "2015-10-05T09:28:18.360Z"
-        },
-        {
-            "_id": "5612428f658d9efa1040356d",
-            "name": "Ignasi Errando",
-            "company": "CISCO",
-            "position": "Sales Business Development Manager",
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/cisco-ignasi-errando.jpg",
-            "linkedin": "https://es.linkedin.com/pub/ignasi-errando/1/aa/946",
-            "__v": 0,
-            "date": "2015-10-05T09:27:43.485Z"
-        },
-        {
-            "_id": "56124221658d9efa1040356c",
-            "name": "Jesus Freire",
-            "company": "IBM",
-            "position": "Banking & FM Technical Leader, IBM Europe",
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/ibm-jesus-freire.png",
-            "linkedin": "https://es.linkedin.com/in/jesusfreire",
-            "__v": 0,
-            "date": "2015-10-05T09:25:53.938Z"
-        },
-        {
-            "_id": "561241f2658d9efa1040356b",
-            "name": "Pedro Diezma",
-            "company": "ZERINTIA",
-            "position": "CEO Zerintia Tech, TEDx Speaker, Writer and Wearable Influencer",
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/06/zerintia-pedro-diezma.jpg",
-            "linkedin": "https://es.linkedin.com/in/pedrodiezma",
-            "__v": 0,
-            "date": "2015-10-05T09:25:06.895Z"
-        },
-        {
-            "_id": "561241d0658d9efa1040356a",
-            "name": "Pablo Junco",
-            "company": "MICROSOFT",
-            "position": "Responsable Estrategia, Sector Financiero",
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/microsoft-pablo-junco.jpg",
-            "linkedin": "https://www.linkedin.com/in/pablojunco",
-            "__v": 0,
-            "date": "2015-10-05T09:24:32.345Z"
-        },
-        {
-            "_id": "56124174658d9efa10403569",
-            "name": "Miguel Castillo",
-            "company": "CARRIOTS",
-            "position": "CEO de Carriots",
-            "linkedin": "https://es.linkedin.com/in/mcastilloh76",
-            "__v": 0,
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/carriots-miguel-castillo.jpg",
-            "date": "2015-10-05T09:23:00.493Z"
-        },
-        {
-            "_id": "56124157658d9efa10403568",
-            "name": "Francisco J. Jariego",
-            "company": "TELEFONICA",
-            "position": "Director of Industrial IoT Telefónica",
-            "linkedin": "https://es.linkedin.com/in/franciscojariego/es",
-            "__v": 0,
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/telefonica-paco-jariego.jpg",
-            "date": "2015-10-05T09:22:31.309Z"
-        },
-        {
-            "_id": "5612412f658d9efa10403567",
-            "name": "Ion Cuervas-Mons",
-            "company": "THINK BIG FACTORY",
-            "position": "CEO de Think Big Factory",
-            "linkedin": "https://es.linkedin.com/pub/ion-cuervas-mons",
-            "__v": 0,
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/08/think-big-ion-cuervas.jpg",
-            "date": "2015-10-05T09:21:51.902Z"
-        },
-        {
-            "_id": "56124110658d9efa10403566",
-            "name": "David Bericat",
-            "company": "RED HAT",
-            "position": "Senior Solution Architect, IoT Specialist",
-            "linkedin": "https://es.linkedin.com/in/franciscosanchezmontero",
-            "__v": 0,
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/10/redhat-david-bericat.jpg",
-            "date": "2015-10-05T09:21:20.473Z"
-        },
-        {
-            "_id": "561240bb658d9efa10403565",
-            "name": "Conchi Sánchez",
-            "company": "FITBIT",
-            "position": "Country Manager for Spain & Portugal",
-            "linkedin": "https://www.linkedin.com/in/conchisanchezmontero",
-            "__v": 0,
-            "image": "http://www.theapihour.com/wp-content/uploads/2015/06/fitbit-conchi-sanchez.jpg",
-            "date": "2015-10-05T09:19:55.424Z"
-        }
-    ]
+[
+    {
+        "_id": "561242b2658d9efa1040356e",
+        "name": "Carlos Kuchkovsky",
+        "company": "BBVA",
+        "position": "Global Head of BBVA Open Platform",
+        "image": "images/speakers/bbva-carlos-kuchkovsky.jpg",
+        "linkedin": "https://es.linkedin.com/in/carloskuchkovsky",
+        "__v": 0,
+        "date": "2015-10-05T09:28:18.360Z"
+    },
+    {
+        "_id": "5612428f658d9efa1040356d",
+        "name": "Ignasi Errando",
+        "company": "CISCO",
+        "position": "Sales Business Development Manager",
+        "image": "images/speakers/cisco-ignasi-errando.jpg",
+        "linkedin": "https://es.linkedin.com/pub/ignasi-errando/1/aa/946",
+        "__v": 0,
+        "date": "2015-10-05T09:27:43.485Z"
+    },
+    {
+        "_id": "56124221658d9efa1040356c",
+        "name": "Jesus Freire",
+        "company": "IBM",
+        "position": "Banking & FM Technical Leader, IBM Europe",
+        "image": "images/speakers/ibm-jesus-freire.png",
+        "linkedin": "https://es.linkedin.com/in/jesusfreire",
+        "__v": 0,
+        "date": "2015-10-05T09:25:53.938Z"
+    },
+    {
+        "_id": "561241f2658d9efa1040356b",
+        "name": "Pedro Diezma",
+        "company": "ZERINTIA",
+        "position": "CEO Zerintia Tech, TEDx Speaker, Writer and Wearable Influencer",
+        "image": "http://www.theapihour.com/wp-content/uploads/2015/06/zerintia-pedro-diezma.jpg",
+        "linkedin": "https://es.linkedin.com/in/pedrodiezma",
+        "__v": 0,
+        "date": "2015-10-05T09:25:06.895Z"
+    },
+    {
+        "_id": "561241d0658d9efa1040356a",
+        "name": "Pablo Junco",
+        "company": "MICROSOFT",
+        "position": "Responsable Estrategia, Sector Financiero",
+        "image": "images/speakers/microsoft-pablo-junco.jpg",
+        "linkedin": "https://www.linkedin.com/in/pablojunco",
+        "__v": 0,
+        "date": "2015-10-05T09:24:32.345Z"
+    },
+    {
+        "_id": "56124174658d9efa10403569",
+        "name": "Miguel Castillo",
+        "company": "CARRIOTS",
+        "position": "CEO de Carriots",
+        "linkedin": "https://es.linkedin.com/in/mcastilloh76",
+        "__v": 0,
+        "image": "images/speakers/carriots-miguel-castillo.jpg",
+        "date": "2015-10-05T09:23:00.493Z"
+    },
+    {
+        "_id": "56124157658d9efa10403568",
+        "name": "Francisco J. Jariego",
+        "company": "TELEFONICA",
+        "position": "Director of Industrial IoT Telefónica",
+        "linkedin": "https://es.linkedin.com/in/franciscojariego/es",
+        "__v": 0,
+        "image": "images/speakers/telefonica-paco-jariego.jpg",
+        "date": "2015-10-05T09:22:31.309Z"
+    },
+    {
+        "_id": "5612412f658d9efa10403567",
+        "name": "Ion Cuervas-Mons",
+        "company": "THINK BIG FACTORY",
+        "position": "CEO de Think Big Factory",
+        "linkedin": "https://es.linkedin.com/pub/ion-cuervas-mons",
+        "__v": 0,
+        "image": "images/speakers/think-big-ion-cuervas.jpg",
+        "date": "2015-10-05T09:21:51.902Z"
+    },
+    {
+        "_id": "56124110658d9efa10403566",
+        "name": "David Bericat",
+        "company": "RED HAT",
+        "position": "Senior Solution Architect, IoT Specialist",
+        "linkedin": "https://es.linkedin.com/in/franciscosanchezmontero",
+        "__v": 0,
+        "image": "http://www.theapihour.com/wp-content/uploads/2015/10/redhat-david-bericat.jpg",
+        "date": "2015-10-05T09:21:20.473Z"
+    },
+    {
+        "_id": "561240bb658d9efa10403565",
+        "name": "Conchi Sánchez",
+        "company": "FITBIT",
+        "position": "Country Manager for Spain & Portugal",
+        "linkedin": "https://www.linkedin.com/in/conchisanchezmontero",
+        "__v": 0,
+        "image": "images/speakers/fitbit-conchi-sanchez.jpg",
+        "date": "2015-10-05T09:19:55.424Z"
+    },
+    {
+        "_id": "56123f32658d9efa10403562",
+        "name": "José Manuel de la Chica",
+        "company": "BBVA",
+        "position": "Tech & Platform Evangelist, Product Manager",
+        "linkedin": "https://es.linkedin.com/in/delachica",
+        "image": "images/speakers/bbva-jose-manuel-de-la-chica.jpg",
+        "date": "2015-10-05T09:13:22.920Z"
+    },
+    {
+        "_id": "56123f9c658d9efa10403564",
+        "name": "José Antonio Lorenzo",
+        "company": "IDC",
+        "position": "Director General de IDC",
+        "linkedin": "https://www.linkedin.com/in/joseantoniolorenzo",
+        "image": "images/speakers/idc-jose-antonio-lorenzo.jpg",
+        "date": "2015-10-05T09:15:08.387Z"
+    },
+    {
+        "_id": "56123f7e658d9efa10403563",
+        "name": "Alfredo Romeo",
+        "company": "INTELIFY",
+        "position": "CEO de Intelify",
+        "linkedin": "https://www.linkedin.com/in/alfredoromeo",
+        "image": "images/speakers/intelify-alfredo-romeo.jpg",
+        "date": "2015-10-05T09:14:38.900Z"
+    },
+    {
+        "_id": "56123e00562c58155dade887",
+        "name": "Julio Merelo",
+        "company": "GENOA",
+        "position": "Product Manager de Genoa",
+        "linkedin": "https://www.linkedin.com/in/jjmereloc",
+        "image": "images/speakers/beeva-genoa-julio-merelo.jpg",
+        "date": "2015-10-05T09:08:16.071Z"
+    },
+    {
+        "_id": "56123e1e562c58155dade888",
+        "name": "David Bordonada",
+        "company": "LIBELIUM",
+        "position": "KAM de Educación en Libelium",
+        "linkedin": "https://es.linkedin.com/in/dbordonada",
+        "image": "images/speakers/cooking-hacks-david-bordonada.jpg",
+        "date": "2015-10-05T09:08:46.268Z"
+    },
+    {
+        "_id": "56123f12658d9efa10403561",
+        "name": "Carlos Muñoz",
+        "company": "BEEVA",
+        "position": "CINO, Creative Technologist & Entrepreneur",
+        "linkedin": "https://es.linkedin.com/in/carlosmunozromero",
+        "image": "images/speakers/beeva-carlos-munoz.jpg",
+        "date": "2015-10-05T09:12:50.338Z"
+    },
+    {
+        "_id": "56123ea2658d9efa1040355f",
+        "name": "Miguel Ángel Sánchez Ciria",
+        "company": "ABORDA",
+        "position": "CEO de Aborda (Cloud Computing Company)",
+        "linkedin": "https://es.linkedin.com/pub/miguel-angel-sanchez-ciria",
+        "image": "images/speakers/aborda-miguelangel-sanchez-ciria1.jpg",
+        "date": "2015-10-05T09:10:58.210Z"
+    },
+    {
+        "_id": "56123e46562c58155dade889",
+        "name": "Carlos Sánchez",
+        "company": "M2M CONSULTANCY",
+        "position": "CEO & Founder M2M Innovation Factory, Jojoki Emotional Engagement Factory",
+        "linkedin": "https://es.linkedin.com/in/carlossanchezcorrales",
+        "image": "images/speakers/m2m-carlos-sanchez.jpg",
+        "date": "2015-10-05T09:09:26.715Z"
+    },
+    {
+        "_id": "56123ebe658d9efa10403560",
+        "name": "César García Saez",
+        "company": "IOT MADRID MEETUP",
+        "position": " Co-organizador / Makespace Madrid",
+        "linkedin": "https://www.linkedin.com/in/cesargarciasaez",
+        "image": "images/speakers/iot-madrid-cesar-garcia.jpg",
+        "date": "2015-10-05T09:11:26.423Z"
+    }
+]
 
