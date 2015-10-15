@@ -31,6 +31,7 @@ angular.module('quasarFrontendApp')
         $scope.loudestTalks = [];
         $scope.busiestTalks = [];
 
+
         //Variables de control de carga
         $scope.loadState = {
             'locations': false,
@@ -124,16 +125,16 @@ angular.module('quasarFrontendApp')
         ];
 
         $scope.metrics = {
-            'costeElectrico':[50,60,70,20,60,20,30,70,50,30,60,30],
+            'costeElectrico':[150,60,70,20,60,20,110,70,50,30,60,30],
             'esperaCafeteria':'5:23',
             'asistentes': {
                 'total':150,
-                'actual':0
+                'actual':20
             },
             'ocupacion':{
                 'planta1':10,
                 'planta2':8,
-                'planta3':5
+                'planta3':51
             },
             'detalleOcupacion':[
                 {

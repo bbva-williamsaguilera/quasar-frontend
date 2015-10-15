@@ -34,6 +34,13 @@ angular.module('quasarFrontendApp')
 
 
           var gaugeColor = ['#9BC741','#EDBC3E','#EDBC3E','#AB1D5D'];
+          attrs.colors = angular.fromJson(attrs.colors);
+          if(attrs.colors !== null && typeof attrs.colors === 'object'){
+            gaugeColor = attrs.colors;
+          }
+
+          var negativeValue = attrs.negativeValue || 'Closed';
+
           
           var currentColor = gaugeColor[Math.floor((actualPercentage*gaugeColor.length)/100)];
 
@@ -205,23 +212,33 @@ angular.module('quasarFrontendApp')
             if (!valorActual) {
                 return;
             }
-
-            if(valorActual !== 'closed'){
-              //Atributo de valor actual
-              var actualValue;
-              if(valorActual.indexOf(':') < 0){
-                actualValue = ['0','0'];
-              }else{
-                actualValue = valorActual.split(':');
+            var isValid = true;
+            var actualValue;
+            if(valorActual.indexOf(':') < 0){
+              isValid = false;
+            }else{
+              actualValue = valorActual.split(':');
+              if(isNaN(actualValue[0]) || isNaN(actualValue[1]) || actualValue[0] <0 || actualValue[1] < 0){
+                isValid = false;
               }
+            }
+
+
+            if(isValid === true){
+              
 
               var actualPercentage = (actualValue[0]*100)/totalSecciones;
               var currentColor = gaugeColor[Math.floor((actualPercentage*gaugeColor.length)/100)];
 
-              var oldValue = parseInt(svg.select('#min').text());
+              var oldValueMin = parseInt(svg.select('#min').text());
+              var oldValueSeg = parseInt(svg.select('#sec').text());
               var mov = 'down';
-              if(oldValue < actualValue[0]){
+              if(oldValueMin < actualValue[0]){
                 mov = 'up';
+              }else{
+                if(oldValueMin === parseInt(actualValue[0]) && oldValueSeg < actualValue[1]){
+                  mov = 'up';
+                }
               }
 
               svg.select('#min').text(actualValue[0]);
@@ -250,7 +267,7 @@ angular.module('quasarFrontendApp')
                 .data([actualPercentage])
                 .attr('d', arc);
             }else{
-              svg.select('#closed').text('Closed');
+              svg.select('#closed').text(negativeValue);
               svg.select('#sec').text('');
               svg.select('#min').text('');
               svg.select('#min-placeholder').text('');

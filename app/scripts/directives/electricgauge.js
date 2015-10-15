@@ -19,14 +19,16 @@ angular.module('quasarFrontendApp')
       link: function(scope, ele, attrs) {
         d3Service.d3().then(function(d3) {
 
-          //Numero de separaciones del grafico
-          var totalSecciones = 12;
+          
 
           //Hora de comienzo del grafico
-          var horaComienzo = 9;
+          var horaComienzo = parseInt(attrs.startHour) || 0;
 
           //Atributo de valor actual
           var data = scope.data;
+
+          //Numero de separaciones del grafico
+          var totalSecciones = data.length;
           
           scope.actualSection = moment().hour()-horaComienzo;
           /*var actualValue;
@@ -47,10 +49,61 @@ angular.module('quasarFrontendApp')
             }
             
           }
+          if(parseInt(attrs.checkEvery)){
+            $interval(checkSection, (60000)*parseInt(attrs.checkEvery));
+          }
 
-          $interval(checkSection, (60000)*15);
+          var lastEventTag = {
+            'prefix': 'Last',
+            'suffix': ''
+          };
 
-          var color = '#9BC741';
+          var totalEventTag = {
+            'prefix': 'Total',
+            'suffix': ''
+          };
+
+          var costEventTag = {
+            'prefix': '',
+            'suffix': '',
+            'value': null
+          };
+
+          attrs.lastEventTag = angular.fromJson(attrs.lastEventTag);
+          if(attrs.lastEventTag !== null && typeof attrs.lastEventTag === 'object'){
+            if(attrs.lastEventTag.prefix !== undefined){
+              lastEventTag.prefix = attrs.lastEventTag.prefix;
+            }
+            if(attrs.lastEventTag.suffix !== undefined){
+              lastEventTag.suffix = attrs.lastEventTag.suffix;
+            }
+          }
+
+          attrs.totalEventTag = angular.fromJson(attrs.totalEventTag);
+          if(attrs.totalEventTag !== null && typeof attrs.totalEventTag === 'object'){
+            if(attrs.totalEventTag.prefix !== undefined){
+              totalEventTag.prefix = attrs.totalEventTag.prefix;
+            }
+            if(attrs.totalEventTag.suffix !== undefined){
+              totalEventTag.suffix = attrs.totalEventTag.suffix;
+            }
+          }
+
+          attrs.costEventTag = angular.fromJson(attrs.costEventTag);
+          if(attrs.costEventTag !== null && typeof attrs.costEventTag === 'object'){
+            if(attrs.costEventTag.prefix !== undefined){
+              costEventTag.prefix = attrs.costEventTag.prefix;
+            }
+            if(attrs.costEventTag.suffix !== undefined){
+              costEventTag.suffix = attrs.costEventTag.suffix;
+            }
+            if(attrs.costEventTag.value !== undefined && !isNaN(parseFloat(attrs.costEventTag.value))){
+              costEventTag.value = attrs.costEventTag.value;
+            }
+          }
+
+          var color = attrs.colorActive || '#9BC741';
+          var greyColor = attrs.colorInactive || '#6F6F6F';
           
           //Elemento SVG ajustado al 100% del contenedor
           var svg = d3.select(ele[0])
@@ -136,9 +189,11 @@ angular.module('quasarFrontendApp')
                 .attr('y',posY);
           }
 
+
+          /*
           svg.select('#energy-container')
             .append('text')
-              .text('Last hour')
+              .text(lastEventTag.prefix)
               .attr('fill', '#FFF')
               .attr('y',-7)
               .attr('x', -32)
@@ -146,48 +201,56 @@ angular.module('quasarFrontendApp')
 
           svg.select('#energy-container')
             .append('text')
-              .text('Event')
+              .text(totalEventTag.prefix)
               .attr('fill', '#FFF')
               .attr('y',3)
               .attr('x', -28)
               .style('font-size','8px');
 
-          svg.select('#energy-container')
-            .append('text')
-              .text('Total cost')
-              .attr('fill', '#FFF')
-              .attr('y',13)
-              .attr('x', -29)
-              .style('font-size','8px');
+          if(costEventTag.value !== null){
+
+            svg.select('#energy-container')
+              .append('text')
+                .text('Total cost')
+                .attr('fill', '#FFF')
+                .attr('y',13)
+                .attr('x', -29)
+                .style('font-size','8px');
+          }*/
 
 
 
           svg.select('#energy-container')
             .append('text')
-              .text('30 kW/h')
+              .text('')
               .attr('id', 'last-hour-value')
               .attr('fill', '#FFF')
               .attr('y',-7)
-              .attr('x', 4)
-              .style('font-size','8px');
+              .attr('x', 0)
+              .style('font-size','8px')
+              .attr('text-anchor', 'middle');
 
           svg.select('#energy-container')
             .append('text')
-              .text('280 kW/h')
+              .text('')
               .attr('id', 'event-value')
               .attr('fill', '#FFF')
               .attr('y',3)
-              .attr('x', -4)
-              .style('font-size','8px');
+              .attr('x', 0)
+              .style('font-size','8px')
+              .attr('text-anchor', 'middle');
 
-          svg.select('#energy-container')
-            .append('text')
-              .text('350 €')
-              .attr('id', 'cost-value')
-              .attr('fill', '#FFF')
-              .attr('y',13)
-              .attr('x', 10)
-              .style('font-size','8px');
+          if(costEventTag.value !== null){
+            svg.select('#energy-container')
+              .append('text')
+                .text('350 €')
+                .attr('id', 'cost-value')
+                .attr('fill', '#FFF')
+                .attr('y',13)
+                .attr('x', 0)
+                .style('font-size','8px')
+                .attr('text-anchor', 'middle');
+          }
 
           
           //Funcion que aclara u oscurece un color RGB
@@ -223,14 +286,43 @@ angular.module('quasarFrontendApp')
             if (!data) {
                 return;
             }
+            var i;
+            var max, min;
+            for(i=0; i<data.length; i++){
+              if(max === undefined || max < data[i]){
+                max = data[i];
+              }
+              if(min === undefined || min > data[i]){
+                min = data[i];
+              }
+            }
 
-            var greyColor = '#6F6F6F';
+            var step = (max-min)/7;
+
+            /*
+            8 secciones
+            20 minimo
+            150 maximo
+
+            130 diferencia
+            
+            20 debería ser igual a 1
+            150 debería ser igual a 8
+
+            20-20 0 minimo =1
+
+            
+
+            150-20 130 maximo =8 
+
+            */
+
             svg.selectAll('.electric-arc').remove();
             var totalEvent = 0;
             var lastHour = 0;
 
             if(scope.actualSection >= 0){
-              for(var i=0; i<scope.actualSection; i++){
+              for(i=0; i<scope.actualSection; i++){
                 var arcColor = greyColor;
                 if( i === (scope.actualSection-1)){
                   arcColor = color;
@@ -238,7 +330,7 @@ angular.module('quasarFrontendApp')
                 }
                 totalEvent += data[i];
 
-                var dataNorm = Math.round(data[i]/10);
+                var dataNorm = Math.ceil((data[i]-min)/step)+1;
                 
                 svg.select('#energy-container')
                   .append('g')
@@ -257,9 +349,14 @@ angular.module('quasarFrontendApp')
 
               }
 
-              svg.select('#last-hour-value').text(lastHour + ' kW/h');
-              svg.select('#event-value').text(totalEvent + ' kW/h');
-              svg.select('#cost-value').text(Math.round(totalEvent*0.14) + ' €');
+              svg.select('#last-hour-value').text(lastEventTag.prefix+ ' '+lastHour + ' '+lastEventTag.suffix);
+              svg.select('#event-value').text(totalEventTag.prefix+ ' '+totalEvent + ' '+totalEventTag.suffix);
+
+              if(costEventTag.value !== null && !isNaN(costEventTag.value)){
+                var costValue = Math.round(totalEvent*parseFloat(costEventTag.value));
+                svg.select('#cost-value').text(costEventTag.prefix+ ' '+costValue + ' '+costEventTag.suffix);
+              }
+              
 
             }
 

@@ -16,11 +16,11 @@ angular.module('quasarFrontendApp')
         label: '@',
         onClick: '&'
       },
-      link: function(scope, ele) {
+      link: function(scope, ele, attrs) {
         d3Service.d3().then(function(d3) {
 
           //Numero de separaciones del gauge
-          var totalSecciones = 18;
+          var totalSecciones = parseInt(attrs.sections) || 18;
 
           //Margen entre las secciones
           var margenSeccion = 2;
@@ -36,6 +36,10 @@ angular.module('quasarFrontendApp')
           var seccionMarcada = Math.floor((actualValue*totalSecciones) / 100);
           
           var gaugeColor = ['#9BC741','#EDBC3E','#AB1D5D'];
+          attrs.colors = angular.fromJson(attrs.colors);
+          if(attrs.colors !== null && typeof attrs.colors === 'object'){
+            gaugeColor = attrs.colors;
+          }
 
           //Elemento SVG ajustado al 100% del contenedor
           var svg = d3.select(ele[0])

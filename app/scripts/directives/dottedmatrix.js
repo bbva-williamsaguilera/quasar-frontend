@@ -17,7 +17,7 @@ angular.module('quasarFrontendApp')
         label: '@',
         onClick: '&'
       },
-      link: function(scope, ele) {
+      link: function(scope, ele, attrs) {
         d3Service.d3().then(function(d3) {
 
           //Atributo de valor maximo
@@ -33,13 +33,29 @@ angular.module('quasarFrontendApp')
           var actualPercentage = (actualValue*100)/totalValue;
 
           //Tamaño de los puntos
-          var dotSize = 6;
-          var margin = 2;
+          var dotSize = parseInt(attrs.dotRadius) || 6;
+          var margin = parseInt(attrs.dotMargin) || 2;
 
           var dotColor = {
             active: '#9BC741',
             inactive: '#3E3E3D'
           };
+          attrs.dotColors = angular.fromJson(attrs.dotColors);
+          if(attrs.dotColors !== null && typeof attrs.dotColors === 'object'){
+            if(attrs.dotColors.active !== undefined){
+              dotColor.active = attrs.dotColors.active;
+            }
+            if(attrs.dotColors.inactive !== undefined){
+              dotColor.inactive = attrs.dotColors.inactive;
+            }
+          }
+
+          var showNumbers = true;
+          if(attrs.showNumbers !== undefined){
+            if(attrs.showNumbers.toLowerCase() === 'false'){
+              showNumbers = false;
+            }
+          }
 
           //Elemento SVG ajustado al 80% del contenedor
           var svg = d3.select(ele[0])
@@ -100,24 +116,25 @@ angular.module('quasarFrontendApp')
             }
           }
 
+          if(showNumbers === true){
+            svg.append('text')
+              .attr('fill', '#FFF')
+              .attr('x', 16)
+              .attr('y', totalHeight)
+              .style('font-size','14px')
+              .attr('text-anchor', 'middle')
+              .text(actualValue)
+              .attr('id','text-actual');
 
-          svg.append('text')
-            .attr('fill', '#FFF')
-            .attr('x', 16)
-            .attr('y', totalHeight)
-            .style('font-size','14px')
-            .attr('text-anchor', 'middle')
-            .text(actualValue)
-            .attr('id','text-actual');
-
-          svg.append('text')
-            .attr('fill', '#FFF')
-            .attr('x', 40)
-            .attr('y', totalHeight)
-            .style('font-size','9px')
-            .attr('text-anchor', 'middle')
-            .text(' / '+totalValue)
-            .attr('id','text-total');
+            svg.append('text')
+              .attr('fill', '#FFF')
+              .attr('x', 40)
+              .attr('y', totalHeight)
+              .style('font-size','9px')
+              .attr('text-anchor', 'middle')
+              .text(' / '+totalValue)
+              .attr('id','text-total');
+          }
 
 
 
@@ -148,7 +165,9 @@ angular.module('quasarFrontendApp')
               }
             }
 
-            svg.select('#text-actual').text(valorActual);
+            if(showNumbers === true){
+              svg.select('#text-actual').text(valorActual);
+            }
 
           };
         });

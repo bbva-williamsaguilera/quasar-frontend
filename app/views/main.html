@@ -134,6 +134,11 @@
 		 
 		  	<electric-gauge
 		  		data="metrics.costeElectrico"
+		  		start-hour='9'
+		  		check-every='15'
+		  		last-event-tag='{ "prefix":"Last hour", "suffix":"kW/h" }'
+		  		total-event-tag='{ "prefix":"Event", "suffix":"kW/h" }'
+		  		cost-event-tag='{ "prefix":"Total cost", "suffix":"€", "value":0.14 }'
 		  		height="175">
 		  	</electric-gauge> 
 
